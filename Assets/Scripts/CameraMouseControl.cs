@@ -43,6 +43,8 @@ public class CameraMouseControl : MonoBehaviour
     {
         if (_isDragging)
         {
+            Cursor.lockState = CursorLockMode.Confined;
+
             Vector2 mouseDelta = _playerInput.CameraMove.MouseDelta.ReadValue<Vector2>();
 
             Vector3 newPosition = transform.position + new Vector3(-mouseDelta.x, 0f, -mouseDelta.y) * _dragSpeed;
@@ -56,5 +58,7 @@ public class CameraMouseControl : MonoBehaviour
 
             transform.position = newPosition;
         }
+
+        Cursor.lockState = CursorLockMode.Confined;
     }
 }
