@@ -59,6 +59,6 @@ public class CameraMouseControl : MonoBehaviour
             transform.position = newPosition;
         }
 
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
     }
 }
