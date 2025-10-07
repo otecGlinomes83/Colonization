@@ -26,9 +26,16 @@ public class Mover : MonoBehaviour
 
     private IEnumerator MoveTo(Transform target)
     {
+        Vector3 targetPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
+
         while (enabled)
         {
-            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, _moveSpeed * Time.deltaTime);
+            targetPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
+
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
+
+            transform.rotation = Quaternion.LookRotation(targetPosition);
+
             yield return null;
         }
     }

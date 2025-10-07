@@ -1,50 +1,53 @@
-using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Mover))]
 public class Robot : MonoBehaviour
 {
-    [SerializeField] private Resource _resource;
     [SerializeField] private SpringJoint _springJoint;
     [SerializeField] private Transform _basePosition;
     [SerializeField] private Rope _rope;
     [SerializeField] private ResourceDetector _detector;
 
-    private Coroutine _moveToResourceCoroutine;
+    private Resource _resource;
     private Mover _mover;
+
+    private bool _isFree = true;
+
+    public bool IsFree => _isFree;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
-    }
-
-    private void Start()
-    {
         _rope.gameObject.SetActive(false);
-        _detector.SetResource(_resource);
-
-        _mover.StartMoveToTarget(_resource.transform);
     }
 
     private void OnEnable()
     {
-        _detector.ResourceDetected += MoveToBase;
+        _detector.ResourceDetected += ConnectResource;
+        _resource.ReadyForRelease += () => _rope.gameObject.SetActive(false);
     }
 
     private void OnDisable()
     {
-        _detector.ResourceDetected -= MoveToBase;
+        _detector.ResourceDetected -= ConnectResource;
+        _resource.ReadyForRelease -= () => _rope.gameObject.SetActive(false);
     }
 
-    private void MoveToBase()
+    public void GetResource(Resource resource)
     {
-        ConnectResource();
-        _mover.StartMoveToTarget(_basePosition.transform);
+        _isFree = false;
+        _resource = resource;
+
+        _detector.SetResource(_resource);
+        _mover.StartMoveToTarget(_resource.transform);
     }
 
     private void ConnectResource()
     {
-        _springJoint.connectedBody = _resource.GetComponent<Rigidbody>();
+        _mover.StopMoveTo();
+        _springJoint.connectedBody = _resource.Rigidbody;
         _rope.gameObject.SetActive(true);
+
+        _mover.StartMoveToTarget(_basePosition.transform);
     }
 }
