@@ -34,7 +34,7 @@ public class Mover : MonoBehaviour
 
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
 
-            transform.rotation = Quaternion.LookRotation(targetPosition);
+          //  transform.rotation = Quaternion.LookRotation(targetPosition);
 
             yield return null;
         }

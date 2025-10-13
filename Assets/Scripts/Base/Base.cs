@@ -1,14 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
+[RequireComponent(typeof(Pusher))]
 public class Base : MonoBehaviour
 {
-    private Storage _storage = new Storage();
-    private List<Robot> _robots = new List<Robot>();
-    private List<Robot> _freeRobots = new List<Robot>();
+    [SerializeField] private ResourceDetector _resourceDetector;
+    [SerializeField] private ResourceFinder _resourceFinder;
+    [SerializeField] private RobotStorage _robotStorage;
+    [SerializeField] private ResourceStorage _storage;
+
+    private Pusher _pusher;
+
+    private List<Resource> _expectedResources = new List<Resource>();
+
+    private void Awake()
+    {
+        _pusher = GetComponent<Pusher>();
+    }
+
+    private void OnEnable()
+    {
+        _resourceDetector.Detected += OnResourceDetected;
+    }
+
+    private void OnDisable()
+    {
+        _resourceDetector.Detected -= OnResourceDetected;
+    }
+
+    private void Start()
+    {
+        StartCoroutine(CooldownResourceTask());
+    }
 
     private IEnumerator CooldownResourceTask()
     {
@@ -16,28 +40,64 @@ public class Base : MonoBehaviour
 
         while (enabled)
         {
-            if (_storage.IsFull == false)
-            {
-                yield return cooldown;
+            yield return cooldown;
 
+            if (_robotStorage.TryGetFreeRobot(out Robot robot))
+            {
+                if (_storage.IsFull == false)
+                {
+                    if (TryGetResource(out Resource resource))
+                    {
+                        robot.SetResource(resource);
+                        _resourceDetector.Detected += OnResourceDetected;
+                    }
+                    else
+                    {
+                        _robotStorage.AddFreeRobot(robot);
+                        Debug.Log("Resource not found or all robots is busy");
+                    }
+                }
+                else
+                {
+                    _robotStorage.AddFreeRobot(robot);
+                    Debug.Log("Storage is Full!");
+                }
+            }
+            else
+            {
+                Debug.Log("All robots is busy");
             }
         }
     }
 
-    private void FindResource()
+    private bool TryGetResource(out Resource resource)
     {
-        ResourceType requiredType = _storage.GetNecessaryResourceType();
+        resource = null;
 
-
-    }
-
-    private Robot GetFreeRobot()
-    {
-        if (_freeRobots.Count > 0)
+        if (_storage.TryGetNeededResourceType(out ResourceType type))
         {
-            return _freeRobots.First();
+            if (_resourceFinder.TryGetNearResourceByType(type, out Resource nearestResource))
+            {
+                resource = nearestResource;
+                _expectedResources.Add(nearestResource);
+
+                return true;
+            }
         }
 
-        return null;
+        return false;
+    }
+
+    private void OnResourceDetected(Resource resource)
+    {
+        if (_expectedResources.Contains(resource))
+        {
+            _expectedResources.Remove(resource);
+            _storage.AddResource(resource);
+        }
+        else
+        {
+            _pusher.Push(resource.Rigidbody);
+        }
     }
 }

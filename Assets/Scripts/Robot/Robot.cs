@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Mover))]
@@ -6,14 +7,12 @@ public class Robot : MonoBehaviour
     [SerializeField] private SpringJoint _springJoint;
     [SerializeField] private Transform _basePosition;
     [SerializeField] private Rope _rope;
-    [SerializeField] private ResourceDetector _detector;
+    [SerializeField] private ResourceDetector _resourceDetector;
 
-    private Resource _resource;
+    private Resource _targetResource;
     private Mover _mover;
 
-    private bool _isFree = true;
-
-    public bool IsFree => _isFree;
+    public event Action<Robot> Freed;
 
     private void Awake()
     {
@@ -23,31 +22,43 @@ public class Robot : MonoBehaviour
 
     private void OnEnable()
     {
-        _detector.ResourceDetected += ConnectResource;
-        _resource.ReadyForRelease += () => _rope.gameObject.SetActive(false);
+        _resourceDetector.Detected += OnResourceDetected;
     }
 
     private void OnDisable()
     {
-        _detector.ResourceDetected -= ConnectResource;
-        _resource.ReadyForRelease -= () => _rope.gameObject.SetActive(false);
+        _resourceDetector.Detected -= ConnectResource;
     }
 
-    public void GetResource(Resource resource)
+    public void SetResource(Resource resource)
     {
-        _isFree = false;
-        _resource = resource;
-
-        _detector.SetResource(_resource);
-        _mover.StartMoveToTarget(_resource.transform);
+        Debug.Log($"Robot has {resource.Type} as target");
+        _targetResource = resource;
+        _targetResource.ReadyForRelease += OnResourceReadyForRelease;
+        _mover.StartMoveToTarget(_targetResource.transform);
     }
 
-    private void ConnectResource()
+    private void OnResourceReadyForRelease(Resource resource)
+    {
+        _targetResource.ReadyForRelease -= OnResourceReadyForRelease;
+        _springJoint.connectedBody = null;
+
+        _rope.gameObject.SetActive(false);
+        Freed?.Invoke(this);
+    }
+
+    private void ConnectResource(Resource resource)
     {
         _mover.StopMoveTo();
-        _springJoint.connectedBody = _resource.Rigidbody;
+        _springJoint.connectedBody = resource.Rigidbody;
         _rope.gameObject.SetActive(true);
-
+        _rope.Initialize(transform, resource.transform);
         _mover.StartMoveToTarget(_basePosition.transform);
+    }
+
+    private void OnResourceDetected(Resource resource)
+    {
+        if (resource == _targetResource)
+            ConnectResource(resource);
     }
 }

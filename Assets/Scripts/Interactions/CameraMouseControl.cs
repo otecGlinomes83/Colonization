@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraMouseControl : MonoBehaviour
 {
@@ -28,37 +29,43 @@ public class CameraMouseControl : MonoBehaviour
     private void OnEnable()
     {
         _playerInput.Enable();
-        _playerInput.CameraMove.MoveButton.performed += ctx => _isDragging = true;
-        _playerInput.CameraMove.MoveButton.canceled += ctx => _isDragging = false;
+
+        _playerInput.CameraMove.MoveButton.performed += OnDragPerformed;
+        _playerInput.CameraMove.MoveButton.canceled += OnDragCanceled;
     }
 
     private void OnDisable()
     {
         _playerInput.Disable();
-        _playerInput.CameraMove.MoveButton.performed -= ctx => _isDragging = true;
-        _playerInput.CameraMove.MoveButton.canceled -= ctx => _isDragging = false;
+
+        _playerInput.CameraMove.MoveButton.performed -= OnDragPerformed;
+        _playerInput.CameraMove.MoveButton.canceled -= OnDragCanceled;
     }
 
     private void Update()
     {
         if (_isDragging)
         {
-            Cursor.lockState = CursorLockMode.Confined;
+            if (Cursor.lockState != CursorLockMode.Confined)
+                Cursor.lockState = CursorLockMode.Confined;
 
             Vector2 mouseDelta = _playerInput.CameraMove.MouseDelta.ReadValue<Vector2>();
 
             Vector3 newPosition = transform.position + new Vector3(-mouseDelta.x, 0f, -mouseDelta.y) * _dragSpeed;
 
-            newPosition = new Vector3
-                (
-                Mathf.Clamp(newPosition.x, _minX, _maxX),
-                transform.position.y,
-                Mathf.Clamp(newPosition.z, _minZ, _maxZ)
-                );
+            newPosition = new Vector3(Mathf.Clamp(newPosition.x, _minX, _maxX), transform.position.y,
+                Mathf.Clamp(newPosition.z, _minZ, _maxZ));
 
             transform.position = newPosition;
         }
 
-        Cursor.lockState = CursorLockMode.None;
+        if (Cursor.lockState != CursorLockMode.None)
+            Cursor.lockState = CursorLockMode.None;
     }
+
+    private void OnDragPerformed(InputAction.CallbackContext ctx) =>
+         _isDragging = true;
+
+    private void OnDragCanceled(InputAction.CallbackContext ctx) =>
+        _isDragging = false;
 }
