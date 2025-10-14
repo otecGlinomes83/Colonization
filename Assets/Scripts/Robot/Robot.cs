@@ -33,6 +33,7 @@ public class Robot : MonoBehaviour
     public void SetResource(Resource resource)
     {
         Debug.Log($"Robot has {resource.Type} as target");
+        resource.SetReserve(true);
         _targetResource = resource;
         _targetResource.ReadyForRelease += OnResourceReadyForRelease;
         _mover.StartMoveToTarget(_targetResource.transform);
@@ -43,6 +44,7 @@ public class Robot : MonoBehaviour
         _targetResource.ReadyForRelease -= OnResourceReadyForRelease;
         _springJoint.connectedBody = null;
 
+        resource.SetReserve(false);
         _rope.gameObject.SetActive(false);
         Freed?.Invoke(this);
     }

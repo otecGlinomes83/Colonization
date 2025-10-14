@@ -7,6 +7,7 @@ using UnityEngine.Pool;
 public class ResourceSpawner : MonoBehaviour
 {
     [SerializeField] private Resource _resourcePrefab;
+    [SerializeField] private float _spawnRate;
     [SerializeField] private int _maxSpawns;
 
     private BoxCollider _spawnZone;
@@ -33,9 +34,11 @@ public class ResourceSpawner : MonoBehaviour
 
     private IEnumerator CooldownSpawn()
     {
+        WaitForSecondsRealtime cooldown = new WaitForSecondsRealtime(_spawnRate);
+
         while (enabled)
         {
-            yield return new WaitForSecondsRealtime(5f);
+            yield return cooldown;
             TrySpawnResource();
         }
     }

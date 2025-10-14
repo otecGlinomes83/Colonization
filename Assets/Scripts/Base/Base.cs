@@ -9,6 +9,7 @@ public class Base : MonoBehaviour
     [SerializeField] private ResourceFinder _resourceFinder;
     [SerializeField] private RobotStorage _robotStorage;
     [SerializeField] private ResourceStorage _storage;
+    [SerializeField] private float _callRate;
 
     private Pusher _pusher;
 
@@ -36,7 +37,7 @@ public class Base : MonoBehaviour
 
     private IEnumerator CooldownResourceTask()
     {
-        WaitForSecondsRealtime cooldown = new WaitForSecondsRealtime(5f);
+        WaitForSecondsRealtime cooldown = new WaitForSecondsRealtime(_callRate);
 
         while (enabled)
         {

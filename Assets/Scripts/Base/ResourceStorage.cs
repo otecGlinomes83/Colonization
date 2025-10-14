@@ -17,7 +17,6 @@ public class ResourceStorage : MonoBehaviour
     private int _maxTotalResourceCount;
 
     private List<ResourceParameters> _resources;
-    private List<ResourceParameters> _expectedResources;
 
     public event Action<ResourceType, int> CountChanged;
 
@@ -35,54 +34,59 @@ public class ResourceStorage : MonoBehaviour
         _maxTotalResourceCount = _resources.Sum(resource => resource.MaxCount);
     }
 
-    public void AddResource(Resource resource)
+    public void AddResource(Resource resourceToAdd)
     {
-        int index = _resources.FindIndex(x => x.Type == resource.Type);
+        int index = _resources.FindIndex(resource => resource.Type == resourceToAdd.Type);
 
         if (index >= 0)
         {
-            ResourceParameters parameter = _resources[index];
+            ResourceParameters tempParameter = _resources[index];
 
-            parameter.CurrentCount++;
+            tempParameter.CurrentCount++;
+            tempParameter.ExpectedCount--;
             _currentResourceCount++;
 
-            _resources[index] = parameter;
+            _resources[index] = tempParameter;
 
-            CountChanged?.Invoke(resource.Type, _resources[index].CurrentCount);
-            resource.Release();
+            CountChanged?.Invoke(resourceToAdd.Type, _resources[index].CurrentCount);
         }
+        else
+        {
+            Debug.LogWarning("Resource not found in List and freed!");
+        }
+
+        resourceToAdd.Release();
     }
 
     public bool TryGetNeededResourceType(out ResourceType type)
     {
-        type = default;
+        type = 0;
 
         List<ResourceParameters> neededResources = _resources
-            .Where(resource => resource.CurrentCount < resource.MaxCount)
-            .OrderBy(resource => resource.CurrentCount)
+            .Where(resource => resource.ExpectedCount + resource.CurrentCount < resource.MaxCount)
+            .OrderBy(resource => resource.ExpectedCount)
+            .ThenBy(resource => resource.CurrentCount)
             .ToList();
 
-        if (neededResources.Count == 0)
-            return false;
+        if (neededResources.Count != 0)
+        {
+            int targetIndex = _resources.FindIndex(resource => resource.Type == neededResources.First().Type);
 
-        type = neededResources.First().Type;
-        Debug.Log($"Current needed type is {type}");
+            if (targetIndex >= 0)
+            {
+                ResourceParameters tempParameters = _resources[targetIndex];
+                tempParameters.ExpectedCount++;
+                _resources[targetIndex] = tempParameters;
 
-        return true;
-    }
-}
+                type = _resources[targetIndex].Type;
 
-public struct ExpectedResourceParameters
-{
-    private ResourceType _type;
-    private int _count;
+                Debug.Log($"Current needed type is {type}, expected {tempParameters.ExpectedCount}, current {tempParameters.CurrentCount}, max {tempParameters.MaxCount}");
 
-    public ResourceType Type => _type;
-    public int Count => _count;
+                return true;
+            }
+        }
 
-    public ExpectedResourceParameters(ResourceType type, int count)
-    {
-        _type = type;
-        _count = count;
+        Debug.LogWarning("Storage don't have any needed resource");
+        return false;
     }
 }

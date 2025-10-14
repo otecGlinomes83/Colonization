@@ -8,8 +8,9 @@ public class Resource : MonoBehaviour
 
     public event Action<Resource> ReadyForRelease;
 
-    public Rigidbody Rigidbody { get; private set; }
     public ResourceType Type => _type;
+    public Rigidbody Rigidbody { get; private set; }
+    public bool IsReserved { get; private set; }
 
     private void Awake()
     {
@@ -18,4 +19,7 @@ public class Resource : MonoBehaviour
 
     public void Release() =>
         ReadyForRelease?.Invoke(this);
+
+    public void SetReserve(bool newState) =>
+        IsReserved = newState;
 }
