@@ -133,7 +133,7 @@ PrefabInstance:
       objectReference: {fileID: 1960406592}
     - target: {fileID: 6755186374999294333, guid: b4ba1db602da246459b94c3de02d2515, type: 3}
       propertyPath: _moveSpeed
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6910416049864707517, guid: b4ba1db602da246459b94c3de02d2515, type: 3}
       propertyPath: m_Name
@@ -860,7 +860,7 @@ PrefabInstance:
       objectReference: {fileID: 1960406592}
     - target: {fileID: 6755186374999294333, guid: b4ba1db602da246459b94c3de02d2515, type: 3}
       propertyPath: _moveSpeed
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6910416049864707517, guid: b4ba1db602da246459b94c3de02d2515, type: 3}
       propertyPath: m_Name
@@ -2787,7 +2787,7 @@ MonoBehaviour:
   _resourceFinder: {fileID: 1429051896}
   _robotStorage: {fileID: 1123558658}
   _storage: {fileID: 593482721}
-  _callRate: 0.25
+  _callRate: 0.5
 --- !u!114 &1960406594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2815,7 +2815,7 @@ PrefabInstance:
       objectReference: {fileID: 1960406592}
     - target: {fileID: 6755186374999294333, guid: b4ba1db602da246459b94c3de02d2515, type: 3}
       propertyPath: _moveSpeed
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6910416049864707517, guid: b4ba1db602da246459b94c3de02d2515, type: 3}
       propertyPath: m_Name
