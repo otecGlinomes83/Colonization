@@ -4,7 +4,7 @@ using UnityEngine;
 public class ResourcesDisplayer : MonoBehaviour
 {
     [SerializeField] private TMP_Text _countField;
-    [SerializeField] private ResourceStorage _baseStorage;
+    [SerializeField] private ResourceStorage _resourceStorage;
     [SerializeField] private ResourceType _resourceType;
 
     private void Awake()
@@ -14,12 +14,12 @@ public class ResourcesDisplayer : MonoBehaviour
 
     private void OnEnable()
     {
-        _baseStorage.CountChanged += ChangeCount;
+        _resourceStorage.CountChanged += ChangeCount;
     }
 
     private void OnDisable()
     {
-        _baseStorage.CountChanged -= ChangeCount;
+        _resourceStorage.CountChanged -= ChangeCount;
     }
 
     private void ChangeCount(ResourceType resourceType, int count)

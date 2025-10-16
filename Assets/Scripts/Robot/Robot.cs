@@ -32,7 +32,6 @@ public class Robot : MonoBehaviour
 
     public void SetResource(Resource resource)
     {
-        Debug.Log($"Robot has {resource.Type} as target");
         resource.SetReserve(true);
         _targetResource = resource;
         _targetResource.ReadyForRelease += OnResourceReadyForRelease;

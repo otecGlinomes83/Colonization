@@ -22,7 +22,7 @@ public class ResourceSpawner : MonoBehaviour
         _resourcePool = new ObjectPool<Resource>
             (
             createFunc: () => Instantiate(_resourcePrefab),
-    actionOnGet: (resource) => OnGet(resource),
+            actionOnGet: (resource) => OnGet(resource),
             actionOnRelease: (resource) => OnRelease(resource)
             );
     }
@@ -62,6 +62,8 @@ public class ResourceSpawner : MonoBehaviour
         }
 
         resource.gameObject.SetActive(true);
+
+        resource.Rigidbody.linearVelocity = Vector3.zero;
         resource.ReadyForRelease += _resourcePool.Release;
         resource.transform.position = spawnPosition;
     }

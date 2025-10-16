@@ -23,8 +23,7 @@ public class ResourceFinder : MonoBehaviour
 
         Resource[] resources = hits
             .Select(hit => hit.gameObject.GetComponent<Resource>())
-            .Where(resource => resource != null)
-            .Where(resource => resource.IsReserved == false)
+            .Where(resource => resource != null&&resource.IsReserved==false)
             .OrderBy(resource => Vector3.Distance(transform.position, resource.transform.position))
             .Where(resource => resource.Type == requiredType)
             .ToArray();
@@ -33,6 +32,7 @@ public class ResourceFinder : MonoBehaviour
             return false;
 
         nearestResource = resources.First();
+
         return true;
     }
 }

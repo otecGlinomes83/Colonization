@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class ResourceStorage : MonoBehaviour
 {
-    private int _startMetalCount = 0;
-    private int _startPlasticCount = 0;
-    private int _startWiresCount = 0;
+    [SerializeField] private int _maxMetalCount = 3;
+    [SerializeField] private int _maxPlasticCount = 3;
+    [SerializeField] private int _maxWiresCount = 3;
 
-    private int _maxMetalCount = 3;
-    private int _maxPlasticCount = 3;
-    private int _maxWiresCount = 3;
+    [SerializeField] private int _startMetalCount = 0;
+    [SerializeField] private int _startPlasticCount = 0;
+    [SerializeField] private int _startWiresCount = 0;
 
     private int _currentResourceCount = 0;
     private int _maxTotalResourceCount;
@@ -52,10 +52,30 @@ public class ResourceStorage : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Resource not found in List and freed!");
+            Debug.LogError("Resource not found in list and freed.");
         }
 
         resourceToAdd.Release();
+    }
+
+    public bool TryCancelGettingResourceByType(ResourceType type)
+    {
+        int index = _resources.FindIndex(r => r.Type == type);
+
+        if (index >= 0)
+        {
+            ResourceParameters tempParameters = _resources[index];
+            tempParameters.ExpectedCount--;
+            _resources[index] = tempParameters;
+
+            Debug.LogWarning($"Getting resource was canceled. type {tempParameters.Type}, expected {tempParameters.ExpectedCount}, current {tempParameters.CurrentCount}!");
+
+            return true;
+        }
+
+        Debug.LogError("Can't cancel getting resource. Resource not found in storage list.");
+
+        return false;
     }
 
     public bool TryGetNeededResourceType(out ResourceType type)
@@ -86,7 +106,7 @@ public class ResourceStorage : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("Storage don't have any needed resource");
+        Debug.LogWarning("Storage don't have any needed resource!");
         return false;
     }
 }

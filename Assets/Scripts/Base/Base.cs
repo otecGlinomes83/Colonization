@@ -55,18 +55,18 @@ public class Base : MonoBehaviour
                     else
                     {
                         _robotStorage.AddFreeRobot(robot);
-                        Debug.Log("Resource not found or all robots is busy");
+                        Debug.LogError("Resource not found.");
                     }
                 }
                 else
                 {
                     _robotStorage.AddFreeRobot(robot);
-                    Debug.Log("Storage is Full!");
+                    Debug.LogWarning("Storage is Full!");
                 }
             }
             else
             {
-                Debug.Log("All robots is busy");
+                Debug.LogError("All robots is busy.");
             }
         }
     }
@@ -83,6 +83,10 @@ public class Base : MonoBehaviour
                 _expectedResources.Add(nearestResource);
 
                 return true;
+            }
+            else
+            {
+                _storage.TryCancelGettingResourceByType(type);
             }
         }
 
