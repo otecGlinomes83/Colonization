@@ -55,18 +55,12 @@ public class Base : MonoBehaviour
                     else
                     {
                         _robotStorage.AddFreeRobot(robot);
-                        Debug.LogError("Resource not found.");
                     }
                 }
                 else
                 {
                     _robotStorage.AddFreeRobot(robot);
-                    Debug.LogWarning("Storage is Full!");
                 }
-            }
-            else
-            {
-                Debug.LogError("All robots is busy.");
             }
         }
     }

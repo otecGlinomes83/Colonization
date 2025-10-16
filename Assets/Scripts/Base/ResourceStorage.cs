@@ -50,10 +50,6 @@ public class ResourceStorage : MonoBehaviour
 
             CountChanged?.Invoke(resourceToAdd.Type, _resources[index].CurrentCount);
         }
-        else
-        {
-            Debug.LogError("Resource not found in list and freed.");
-        }
 
         resourceToAdd.Release();
     }
@@ -68,12 +64,8 @@ public class ResourceStorage : MonoBehaviour
             tempParameters.ExpectedCount--;
             _resources[index] = tempParameters;
 
-            Debug.LogWarning($"Getting resource was canceled. type {tempParameters.Type}, expected {tempParameters.ExpectedCount}, current {tempParameters.CurrentCount}!");
-
             return true;
         }
-
-        Debug.LogError("Can't cancel getting resource. Resource not found in storage list.");
 
         return false;
     }
@@ -100,13 +92,10 @@ public class ResourceStorage : MonoBehaviour
 
                 type = _resources[targetIndex].Type;
 
-                Debug.Log($"Current needed type is {type}, expected {tempParameters.ExpectedCount}, current {tempParameters.CurrentCount}, max {tempParameters.MaxCount}");
-
                 return true;
             }
         }
 
-        Debug.LogWarning("Storage don't have any needed resource!");
         return false;
     }
 }
