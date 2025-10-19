@@ -1,22 +1,19 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Mover))]
 public class Robot : MonoBehaviour
 {
-    [SerializeField] private SpringJoint _springJoint;
     [SerializeField] private Transform _basePosition;
     [SerializeField] private Rope _rope;
     [SerializeField] private ResourceDetector _resourceDetector;
+    [SerializeField] private Mover _mover;
 
     private Resource _targetResource;
-    private Mover _mover;
 
     public event Action<Robot> Freed;
 
     private void Awake()
     {
-        _mover = GetComponent<Mover>();
         _rope.gameObject.SetActive(false);
     }
 
@@ -41,7 +38,7 @@ public class Robot : MonoBehaviour
     private void OnResourceReadyForRelease(Resource resource)
     {
         _targetResource.ReadyForRelease -= OnResourceReadyForRelease;
-        _springJoint.connectedBody = null;
+        _rope.SetConnectedBody(null);
 
         resource.SetReserve(false);
         _rope.gameObject.SetActive(false);
@@ -51,9 +48,10 @@ public class Robot : MonoBehaviour
     private void ConnectResource(Resource resource)
     {
         _mover.StopMoveTo();
-        _springJoint.connectedBody = resource.Rigidbody;
+
         _rope.gameObject.SetActive(true);
-        _rope.Initialize(transform, resource.transform);
+        _rope.SetConnectedBody(resource.Rigidbody);
+
         _mover.StartMoveToTarget(_basePosition.transform);
     }
 
