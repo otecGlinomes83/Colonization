@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class ResourcesDisplayer : MonoBehaviour
+public class ResourcesDisplay : MonoBehaviour
 {
     [SerializeField] private TMP_Text _countField;
     [SerializeField] private ResourceStorage _resourceStorage;

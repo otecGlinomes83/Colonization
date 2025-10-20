@@ -1,34 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Pusher))]
 public class Base : MonoBehaviour
 {
-    [SerializeField] private ResourceDetector _resourceDetector;
-    [SerializeField] private ResourceFinder _resourceFinder;
     [SerializeField] private RobotStorage _robotStorage;
     [SerializeField] private ResourceStorage _storage;
+    [SerializeField] private ResourceDatabase _database;
     [SerializeField] private float _callRate;
-
-    private Pusher _pusher;
-
-    private List<Resource> _expectedResources = new List<Resource>();
-
-    private void Awake()
-    {
-        _pusher = GetComponent<Pusher>();
-    }
-
-    private void OnEnable()
-    {
-        _resourceDetector.Detected += OnResourceDetected;
-    }
-
-    private void OnDisable()
-    {
-        _resourceDetector.Detected -= OnResourceDetected;
-    }
 
     private void Start()
     {
@@ -50,16 +28,16 @@ public class Base : MonoBehaviour
                     if (TryGetResource(out Resource resource))
                     {
                         robot.SetResource(resource);
-                        _resourceDetector.Detected += OnResourceDetected;
+                        robot.ResourceDelivered += OnResourceDelivered;
                     }
                     else
                     {
-                        _robotStorage.AddFreeRobot(robot);
+                        ReturnRobotToStorage(robot);
                     }
                 }
                 else
                 {
-                    _robotStorage.AddFreeRobot(robot);
+                    ReturnRobotToStorage(robot);
                 }
             }
         }
@@ -71,10 +49,9 @@ public class Base : MonoBehaviour
 
         if (_storage.TryGetNeededResourceType(out ResourceType type))
         {
-            if (_resourceFinder.TryGetNearResourceByType(type, out Resource nearestResource))
+            if (_database.TryGetResourceByType(out Resource nearestResource, type))
             {
                 resource = nearestResource;
-                _expectedResources.Add(nearestResource);
 
                 return true;
             }
@@ -87,16 +64,14 @@ public class Base : MonoBehaviour
         return false;
     }
 
-    private void OnResourceDetected(Resource resource)
+    private void OnResourceDelivered(Resource resource)
     {
-        if (_expectedResources.Contains(resource))
-        {
-            _expectedResources.Remove(resource);
             _storage.AddResource(resource);
-        }
-        else
-        {
-            _pusher.Push(resource.Rigidbody);
-        }
+    }
+
+    private void ReturnRobotToStorage(Robot robot)
+    {
+        robot.ResourceDelivered -= OnResourceDelivered;
+        _robotStorage.AddFreeRobot(robot);
     }
 }

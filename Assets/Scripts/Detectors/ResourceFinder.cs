@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -15,23 +16,21 @@ public class ResourceFinder : MonoBehaviour
         }
     }
 
-    public bool TryGetNearResourceByType(ResourceType requiredType, out Resource nearestResource)
+    public bool TryFindResources(out List<Resource> resources)
     {
-        nearestResource = null;
+        resources = null;
 
         Collider[] hits = Physics.OverlapSphere(transform.position, _radius);
 
-        Resource[] resources = hits
+        List<Resource> foundResources = hits
             .Select(hit => hit.gameObject.GetComponent<Resource>())
-            .Where(resource => resource != null&&resource.IsReserved==false)
-            .OrderBy(resource => Vector3.Distance(transform.position, resource.transform.position))
-            .Where(resource => resource.Type == requiredType)
-            .ToArray();
+            .Where(resource => resource != null)
+            .ToList();
 
-        if (resources.Count() == 0)
+        if (foundResources.Count() == 0)
             return false;
 
-        nearestResource = resources.First();
+        resources = foundResources;
 
         return true;
     }

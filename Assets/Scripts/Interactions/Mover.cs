@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -5,7 +6,11 @@ public class Mover : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed;
 
+    [SerializeField] private float _threshold = 1f;
+
     private Coroutine _moveToCoroutine;
+
+    public event Action TargetAchieved;
 
     public void StartMoveToTarget(Transform target)
     {
@@ -28,13 +33,23 @@ public class Mover : MonoBehaviour
     {
         Vector3 targetPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
 
+        float sqrThreshold = _threshold * _threshold;
+
         while (enabled)
         {
             targetPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
 
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
 
-          //  transform.rotation = Quaternion.LookRotation(targetPosition);
+            float sqrDistance = (targetPosition - transform.position).sqrMagnitude;
+
+            if (sqrDistance <= sqrThreshold)
+            {
+                TargetAchieved?.Invoke();
+                _moveToCoroutine = null;
+
+                yield break;
+            }
 
             yield return null;
         }
