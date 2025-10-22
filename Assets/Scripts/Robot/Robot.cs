@@ -21,6 +21,7 @@ public class Robot : MonoBehaviour
     {
         _targetResource = resource;
         _targetResource.ReadyForRelease += OnResourceReadyForRelease;
+
         _mover.StartMoveToTarget(_targetResource.transform);
         _mover.TargetAchieved += OnResourceAchieved;
     }
@@ -28,31 +29,34 @@ public class Robot : MonoBehaviour
     private void OnResourceReadyForRelease(Resource resource)
     {
         _targetResource.ReadyForRelease -= OnResourceReadyForRelease;
-        _rope.SetConnectedBody(null);
+        _targetResource = null;
 
+        _rope.SetConnectedBody(null);
         _rope.gameObject.SetActive(false);
         Freed?.Invoke(this);
     }
 
-    private void ConnectResource(Resource resource)
+    private void ConnectResource()
     {
         _mover.StopMoveTo();
 
         _rope.gameObject.SetActive(true);
-        _rope.SetConnectedBody(resource.Rigidbody);
+        _rope.SetConnectedBody(_targetResource.Rigidbody);
 
         _mover.StartMoveToTarget(_basePosition.transform);
+
+        _mover.TargetAchieved += OnBaseAchieved;
     }
 
     private void OnResourceAchieved()
     {
-        ConnectResource(_targetResource);
         _mover.TargetAchieved -= OnResourceAchieved;
-        _mover.TargetAchieved += OnBaseAchieved;
+        ConnectResource();
     }
 
     private void OnBaseAchieved()
     {
         ResourceDelivered?.Invoke(_targetResource);
+        _mover.TargetAchieved -= OnBaseAchieved;
     }
 }

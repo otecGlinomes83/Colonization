@@ -21,25 +21,17 @@ public class Base : MonoBehaviour
         {
             yield return cooldown;
 
-            if (_robotStorage.TryGetFreeRobot(out Robot robot))
+            if(_robotStorage.TryGetFreeRobot(out Robot robot)==false)
+                continue;
+
+            if(_storage.IsFull||TryGetResource(out Resource resource) == false) 
             {
-                if (_storage.IsFull == false)
-                {
-                    if (TryGetResource(out Resource resource))
-                    {
-                        robot.SetResource(resource);
-                        robot.ResourceDelivered += OnResourceDelivered;
-                    }
-                    else
-                    {
-                        ReturnRobotToStorage(robot);
-                    }
-                }
-                else
-                {
-                    ReturnRobotToStorage(robot);
-                }
+                ReturnRobotToStorage(robot);
+                continue;
             }
+
+            robot.SetResource(resource);
+            robot.ResourceDelivered += OnResourceDelivered;
         }
     }
 
@@ -57,6 +49,7 @@ public class Base : MonoBehaviour
             }
             else
             {
+                Debug.LogError($"Cancel Getting resource {type}!");
                 _storage.TryCancelGettingResourceByType(type);
             }
         }
@@ -66,7 +59,7 @@ public class Base : MonoBehaviour
 
     private void OnResourceDelivered(Resource resource)
     {
-            _storage.AddResource(resource);
+        _storage.AddResource(resource);
     }
 
     private void ReturnRobotToStorage(Robot robot)

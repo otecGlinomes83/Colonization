@@ -20,7 +20,7 @@ public class ResourceDatabase : MonoBehaviour
 
             if (resourcesOneType.Count > 0)
             {
-                resource = resourcesOneType[0];
+                resource = resourcesOneType.First();
                 TryReserveResource(resource);
                 resource.ReadyForRelease += TryUnReserveResource;
                 return true;

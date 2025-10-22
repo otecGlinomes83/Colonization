@@ -44,6 +44,8 @@ public class ResourceStorage : MonoBehaviour
 
             tempParameter.CurrentCount++;
             tempParameter.ExpectedCount--;
+            Debug.LogWarning($"{tempParameter.Type} expected count decreased to{tempParameter.ExpectedCount}!!!");
+
             _currentResourceCount++;
 
             _resources[index] = tempParameter;
@@ -60,9 +62,11 @@ public class ResourceStorage : MonoBehaviour
 
         if (index >= 0)
         {
-            ResourceParameters tempParameters = _resources[index];
-            tempParameters.ExpectedCount--;
-            _resources[index] = tempParameters;
+            ResourceParameters tempParameter = _resources[index];
+            tempParameter.ExpectedCount--;
+            Debug.LogWarning($"{tempParameter.Type} expected count decreased to{tempParameter.ExpectedCount}!!!");
+
+            _resources[index] = tempParameter;
 
             return true;
         }
@@ -86,9 +90,11 @@ public class ResourceStorage : MonoBehaviour
 
             if (targetIndex >= 0)
             {
-                ResourceParameters tempParameters = _resources[targetIndex];
-                tempParameters.ExpectedCount++;
-                _resources[targetIndex] = tempParameters;
+                ResourceParameters tempParameter = _resources[targetIndex];
+                tempParameter.ExpectedCount++;
+                _resources[targetIndex] = tempParameter;
+
+                Debug.LogWarning($"{tempParameter.Type} expected count grown up to{tempParameter.ExpectedCount}!!!");
 
                 type = _resources[targetIndex].Type;
 
