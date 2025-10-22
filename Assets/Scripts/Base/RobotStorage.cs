@@ -24,8 +24,6 @@ public class RobotStorage : MonoBehaviour
             robot = _freeRobots.First();
             _freeRobots.Remove(robot);
 
-            robot.Freed += AddFreeRobot;
-
             return true;
         }
 
@@ -34,7 +32,6 @@ public class RobotStorage : MonoBehaviour
 
     public void AddFreeRobot(Robot robot)
     {
-        robot.Freed -= AddFreeRobot;
         _freeRobots.Add(robot);
     }
 }

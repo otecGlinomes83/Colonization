@@ -36,6 +36,8 @@ public class ResourceStorage : MonoBehaviour
 
     public void AddResource(Resource resourceToAdd)
     {
+        Debug.Log($"Adding new resource {resourceToAdd.Type}!");
+
         int index = _resources.FindIndex(resource => resource.Type == resourceToAdd.Type);
 
         if (index >= 0)

@@ -9,8 +9,7 @@ public class Robot : MonoBehaviour
 
     private Resource _targetResource;
 
-    public event Action<Robot> Freed;
-    public event Action<Resource> ResourceDelivered;
+    public event Action<Robot, Resource> ResourceDelivered;
 
     private void Awake()
     {
@@ -20,20 +19,9 @@ public class Robot : MonoBehaviour
     public void SetResource(Resource resource)
     {
         _targetResource = resource;
-        _targetResource.ReadyForRelease += OnResourceReadyForRelease;
 
         _mover.StartMoveToTarget(_targetResource.transform);
         _mover.TargetAchieved += OnResourceAchieved;
-    }
-
-    private void OnResourceReadyForRelease(Resource resource)
-    {
-        _targetResource.ReadyForRelease -= OnResourceReadyForRelease;
-        _targetResource = null;
-
-        _rope.SetConnectedBody(null);
-        _rope.gameObject.SetActive(false);
-        Freed?.Invoke(this);
     }
 
     private void ConnectResource()
@@ -56,7 +44,20 @@ public class Robot : MonoBehaviour
 
     private void OnBaseAchieved()
     {
-        ResourceDelivered?.Invoke(_targetResource);
+        ClearSubscribes();
+
+        Resource DeliveredResource = _targetResource;
+        _targetResource = null;
+
+        ResourceDelivered?.Invoke(this, DeliveredResource);
+
+        _rope.SetConnectedBody(null);
+        _rope.gameObject.SetActive(false);
+    }
+
+    private void ClearSubscribes()
+    {
+        _mover.TargetAchieved -= OnResourceAchieved;
         _mover.TargetAchieved -= OnBaseAchieved;
     }
 }

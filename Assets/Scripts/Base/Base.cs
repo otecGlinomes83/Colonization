@@ -21,10 +21,10 @@ public class Base : MonoBehaviour
         {
             yield return cooldown;
 
-            if(_robotStorage.TryGetFreeRobot(out Robot robot)==false)
+            if (_robotStorage.TryGetFreeRobot(out Robot robot) == false)
                 continue;
 
-            if(_storage.IsFull||TryGetResource(out Resource resource) == false) 
+            if (_storage.IsFull || TryGetResource(out Resource resource) == false)
             {
                 ReturnRobotToStorage(robot);
                 continue;
@@ -57,14 +57,16 @@ public class Base : MonoBehaviour
         return false;
     }
 
-    private void OnResourceDelivered(Resource resource)
+    private void OnResourceDelivered(Robot robot, Resource resource)
     {
+        robot.ResourceDelivered -= OnResourceDelivered;
+
+        ReturnRobotToStorage(robot);
         _storage.AddResource(resource);
     }
 
     private void ReturnRobotToStorage(Robot robot)
     {
-        robot.ResourceDelivered -= OnResourceDelivered;
         _robotStorage.AddFreeRobot(robot);
     }
 }
