@@ -36,8 +36,6 @@ public class ResourceStorage : MonoBehaviour
 
     public void AddResource(Resource resourceToAdd)
     {
-        Debug.Log($"Adding new resource {resourceToAdd.Type}!");
-
         int index = _resources.FindIndex(resource => resource.Type == resourceToAdd.Type);
 
         if (index >= 0)
@@ -46,7 +44,6 @@ public class ResourceStorage : MonoBehaviour
 
             tempParameter.CurrentCount++;
             tempParameter.ExpectedCount--;
-            Debug.LogWarning($"{tempParameter.Type} expected count decreased to{tempParameter.ExpectedCount}!!!");
 
             _currentResourceCount++;
 
@@ -66,7 +63,6 @@ public class ResourceStorage : MonoBehaviour
         {
             ResourceParameters tempParameter = _resources[index];
             tempParameter.ExpectedCount--;
-            Debug.LogWarning($"{tempParameter.Type} expected count decreased to{tempParameter.ExpectedCount}!!!");
 
             _resources[index] = tempParameter;
 
@@ -95,8 +91,6 @@ public class ResourceStorage : MonoBehaviour
                 ResourceParameters tempParameter = _resources[targetIndex];
                 tempParameter.ExpectedCount++;
                 _resources[targetIndex] = tempParameter;
-
-                Debug.LogWarning($"{tempParameter.Type} expected count grown up to{tempParameter.ExpectedCount}!!!");
 
                 type = _resources[targetIndex].Type;
 

@@ -49,7 +49,6 @@ public class Base : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"Cancel Getting resource {type}!");
                 _storage.TryCancelGettingResourceByType(type);
             }
         }
