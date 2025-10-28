@@ -90,6 +90,6 @@ public class Base : MonoBehaviour
 
     private void OnEnoughForBase()
     {
-        _flag
+        
     }
 }

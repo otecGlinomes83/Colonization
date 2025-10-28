@@ -4,17 +4,24 @@ using UnityEngine;
 public class ClickDetector : MonoBehaviour
 {
 
-    private PlayerInput _input = new PlayerInput();
+    private PlayerInput _input;
 
     public event Action BaseClicked;
 
+    private void Awake()
+    {
+        _input = new PlayerInput();
+    }
+
     private void OnEnable()
     {
+        _input.Enable();
         _input.Player.LeftClick.performed += OnClick;
     }
 
     private void OnDisable()
     {
+        _input.Disable();
         _input.Player.LeftClick.performed -= OnClick;
     }
 
