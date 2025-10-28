@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ClickDetector : MonoBehaviour
 {
-
     private PlayerInput _input;
 
     public event Action BaseClicked;
