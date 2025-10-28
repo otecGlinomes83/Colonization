@@ -1,8 +1,9 @@
 {
+    "version": 1,
     "name": "PlayerInput",
     "maps": [
         {
-            "name": "CameraMove",
+            "name": "Player",
             "id": "c0531b1b-9243-43fc-a5ce-a53f4bdd29c2",
             "actions": [
                 {
@@ -22,6 +23,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "9884be43-ec63-4464-9f28-cf580899405f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -44,6 +54,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "MouseDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cabb3eb3-d352-428c-be50-8f0fa0a83a8a",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LeftClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

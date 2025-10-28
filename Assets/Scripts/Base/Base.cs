@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,7 +7,20 @@ public class Base : MonoBehaviour
     [SerializeField] private RobotStorage _robotStorage;
     [SerializeField] private ResourceStorage _storage;
     [SerializeField] private ResourceDatabase _database;
+    [SerializeField] private ClickDetector _clickDetector;
+
     [SerializeField] private float _callRate;
+
+    private void OnEnable()
+    {
+        _clickDetector.BaseClicked += OnBaseClicked;
+        _storage.EnoughForBase += OnEnoughForBase;
+    }
+
+    private void OnDisable()
+    {
+        _clickDetector.BaseClicked -= OnBaseClicked;
+    }
 
     private void Start()
     {
@@ -67,5 +81,15 @@ public class Base : MonoBehaviour
     private void ReturnRobotToStorage(Robot robot)
     {
         _robotStorage.AddFreeRobot(robot);
+    }
+
+    private void OnBaseClicked()
+    {
+        _storage.SwitchPriority(StoragePriority.Base);
+    }
+
+    private void OnEnoughForBase()
+    {
+        _flag
     }
 }

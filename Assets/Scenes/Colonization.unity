@@ -700,7 +700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a6cd8841eb63f459e8ffaea80f3340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 15
+  _moveSpeed: 25
   _threshold: 1
 --- !u!145 &349716712
 SpringJoint:
@@ -1076,7 +1076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a6cd8841eb63f459e8ffaea80f3340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 15
+  _moveSpeed: 20
   _threshold: 1
 --- !u!145 &489497993
 SpringJoint:
@@ -3444,7 +3444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a6cd8841eb63f459e8ffaea80f3340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 10
+  _moveSpeed: 15
   _threshold: 1
 --- !u!145 &1635877318
 SpringJoint:

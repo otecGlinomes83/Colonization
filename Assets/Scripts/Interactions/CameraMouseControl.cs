@@ -27,16 +27,16 @@ public class CameraMouseControl : MonoBehaviour
     {
         _playerInput.Enable();
 
-        _playerInput.CameraMove.MoveButton.performed += OnDragPerformed;
-        _playerInput.CameraMove.MoveButton.canceled += OnDragCanceled;
+        _playerInput.Player.MoveButton.performed += OnDragPerformed;
+        _playerInput.Player.MoveButton.canceled += OnDragCanceled;
     }
 
     private void OnDisable()
     {
         _playerInput.Disable();
 
-        _playerInput.CameraMove.MoveButton.performed -= OnDragPerformed;
-        _playerInput.CameraMove.MoveButton.canceled -= OnDragCanceled;
+        _playerInput.Player.MoveButton.performed -= OnDragPerformed;
+        _playerInput.Player.MoveButton.canceled -= OnDragCanceled;
     }
 
     private void Update()
@@ -46,7 +46,7 @@ public class CameraMouseControl : MonoBehaviour
             if (Cursor.lockState != CursorLockMode.Confined)
                 Cursor.lockState = CursorLockMode.Confined;
 
-            Vector2 mouseDelta = _playerInput.CameraMove.MouseDelta.ReadValue<Vector2>();
+            Vector2 mouseDelta = _playerInput.Player.MouseDelta.ReadValue<Vector2>();
 
             Vector3 newPosition = transform.position + new Vector3(-mouseDelta.x, 0f, -mouseDelta.y) * _dragSpeed;
 
