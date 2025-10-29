@@ -3,17 +3,28 @@ using UnityEngine;
 
 public class Robot : MonoBehaviour
 {
-    [SerializeField] private Transform _basePosition;
+    [SerializeField] private Transform _endPosition;
     [SerializeField] private Rope _rope;
     [SerializeField] private Mover _mover;
 
     private Resource _targetResource;
 
     public event Action<Robot, Resource> ResourceDelivered;
+    public event Action<Robot> FlagAchieved;
 
     private void Awake()
     {
         _rope.gameObject.SetActive(false);
+    }
+
+    public void Initialize(Transform endPosition)
+    {
+        _endPosition = endPosition;
+    }
+
+    public void WentToNewBase(Transform flagPosition)
+    {
+        _endPosition = flagPosition;
     }
 
     public void SetResource(Resource resource)
@@ -31,9 +42,9 @@ public class Robot : MonoBehaviour
         _rope.gameObject.SetActive(true);
         _rope.SetConnectedBody(_targetResource.Rigidbody);
 
-        _mover.StartMoveToTarget(_basePosition.transform);
+        _mover.StartMoveToTarget(_endPosition.transform);
 
-        _mover.TargetAchieved += OnBaseAchieved;
+        _mover.TargetAchieved += OnEndPositionAchieved;
     }
 
     private void OnResourceAchieved()
@@ -42,7 +53,7 @@ public class Robot : MonoBehaviour
         ConnectResource();
     }
 
-    private void OnBaseAchieved()
+    private void OnEndPositionAchieved()
     {
         ClearSubscribes();
 
@@ -55,9 +66,14 @@ public class Robot : MonoBehaviour
         _rope.gameObject.SetActive(false);
     }
 
+    private void OnFlagAchieved()
+    {
+        FlagAchieved?.Invoke(this);
+    }
+
     private void ClearSubscribes()
     {
         _mover.TargetAchieved -= OnResourceAchieved;
-        _mover.TargetAchieved -= OnBaseAchieved;
+        _mover.TargetAchieved -= OnEndPositionAchieved;
     }
 }

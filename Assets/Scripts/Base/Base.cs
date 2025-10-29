@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,13 +7,15 @@ public class Base : MonoBehaviour
     [SerializeField] private ResourceStorage _storage;
     [SerializeField] private ResourceDatabase _database;
     [SerializeField] private ClickDetector _clickDetector;
+    [SerializeField] private FlagKeeper _flagKeeper;
 
     [SerializeField] private float _callRate;
+
+    private Coroutine _resourceTaskCoroutine;
 
     private void OnEnable()
     {
         _clickDetector.BaseClicked += OnBaseClicked;
-        _storage.EnoughForBase += OnEnoughForBase;
     }
 
     private void OnDisable()
@@ -24,7 +25,7 @@ public class Base : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(CooldownResourceTask());
+        _resourceTaskCoroutine = StartCoroutine(CooldownResourceTask());
     }
 
     private IEnumerator CooldownResourceTask()
@@ -85,11 +86,42 @@ public class Base : MonoBehaviour
 
     private void OnBaseClicked()
     {
+        _flagKeeper.StartPlacement();
+        _flagKeeper.Placed += OnFlagPlaced;
+    }
+
+    private void OnFlagPlaced()
+    {
+        _flagKeeper.Placed -= OnFlagPlaced;
         _storage.SwitchPriority(StoragePriority.Base);
+        _storage.EnoughForBase += OnEnoughForBase;
     }
 
     private void OnEnoughForBase()
     {
-        
+        _storage.EnoughForBase -= OnEnoughForBase;
+
+        _storage.SwitchPriority(StoragePriority.Robot);
+
+        StopCoroutine(_resourceTaskCoroutine);
+
+        StartCoroutine(CooldownGetFreeRobot());
+    }
+
+    private IEnumerator CooldownGetFreeRobot()
+    {
+        WaitForSecondsRealtime cooldown = new WaitForSecondsRealtime(0.25f);
+
+        Robot robot = null;
+
+        yield return null;
+
+        while (robot == null)
+        {
+            _robotStorage.TryGetFreeRobot(out robot);
+        }
+
+        if (_flagKeeper.TryGetFlagPosition(out Transform flagPosition))
+            robot.WentToNewBase(flagPosition);
     }
 }

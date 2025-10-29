@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 [RequireComponent(typeof(ClickDetector))]
 public class FlagKeeper : MonoBehaviour
@@ -7,40 +9,66 @@ public class FlagKeeper : MonoBehaviour
     [SerializeField] private Flag _flagPrefab;
     [SerializeField] private FlagBlueprint _flagBlueprintPrefab;
 
+    private Coroutine _moveCoroutine;
+
     private PlayerInput _playerInput;
 
-    private void OnEnable()
+    private FlagBlueprint _blueprint;
+    private Flag _flag;
+
+    public event Action Placed;
+
+    public void StartPlacement()
     {
+        if (_blueprint == null)
+            _blueprint = Instantiate(_flagBlueprintPrefab);
+
+        _moveCoroutine = StartCoroutine(MoveFlag());
+
         _playerInput = new PlayerInput();
         _playerInput.Enable();
-        _playerInput.Player.LeftClick.performed += StartPlacement;
+        _playerInput.Player.LeftClick.performed += OnMouseClicked;
     }
 
-    private void OnDisable()
+    public bool TryGetFlagPosition(out Transform flagPosition)
     {
-        _playerInput.Player.LeftClick.performed -= StartPlacement;
+        flagPosition = null;
+
+        if(_flag==null)
+            return false;
+
+        flagPosition = _flag.transform;
+
+        return true;
+    }
+
+    private void OnMouseClicked(UnityEngine.InputSystem.InputAction.CallbackContext context)
+    {
+        _playerInput.Player.LeftClick.performed -= OnMouseClicked;
         _playerInput.Disable();
+
+        StopCoroutine(_moveCoroutine);
+
+        _flag = Instantiate(_flagPrefab);
+        _flag.transform.position = _blueprint.transform.position;
+
+        Destroy(_blueprint.gameObject);
+
+        Placed?.Invoke();
     }
 
-    private void StartPlacement(UnityEngine.InputSystem.InputAction.CallbackContext context)
-    {
-        FlagBlueprint flag = Instantiate(_flagBlueprintPrefab);
-
-        StartCoroutine(MoveFlag(flag));
-    }
-
-    private IEnumerator MoveFlag(FlagBlueprint flag)
+    private IEnumerator MoveFlag()
     {
         yield return null;
 
         while (enabled)
         {
-            Ray ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
                 if (hit.collider.gameObject.TryGetComponent<Floor>(out _))
                 {
-                    flag.transform.position = hit.point;
+                    _blueprint.transform.position = hit.point;
                 }
 
             yield return null;

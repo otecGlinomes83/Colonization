@@ -151,6 +151,6 @@ public class ResourceStorage : MonoBehaviour
     private bool IsEnoughForNewRobot() =>
     _resources.All(resource => resource.CurrentCount == resource.MaxCount);
 
-    private bool IsEnoughForNewBase() =>
+    public bool IsEnoughForNewBase() =>
  _resources.All(resource => resource.CurrentCount == resource.MaxCount);
 }
