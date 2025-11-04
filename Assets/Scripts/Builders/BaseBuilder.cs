@@ -9,6 +9,7 @@ public class BaseBuilder : MonoBehaviour
         Base createdBase = Instantiate(_basePrefab);
 
         createdBase.Initialize(initialRobot);
+        createdBase.transform.position = transform.position;
 
         return createdBase;
     }

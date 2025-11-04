@@ -12,8 +12,6 @@ public class Base : MonoBehaviour
     [SerializeField] private ResourceDatabase _database;
     [SerializeField] private float _callRate;
 
-    private Coroutine _resourceTaskCoroutine;
-
     private ResourceStorage _storage;
     private FlagKeeper _flagKeeper;
     private ClickDetector _clickDetector;
@@ -47,7 +45,7 @@ public class Base : MonoBehaviour
 
     private void Start()
     {
-        _resourceTaskCoroutine = StartCoroutine(CooldownResourceTask());
+        StartCoroutine(CooldownResourceTask());
     }
 
     public void Initialize(Robot initialRobot)
@@ -142,7 +140,7 @@ public class Base : MonoBehaviour
         _storage.EnoughForBase -= CreateBase;
         _storage.SwitchPriority(StoragePriority.Robot);
 
-        StopCoroutine(_resourceTaskCoroutine);
+        StopCoroutine(CooldownResourceTask());
         StartCoroutine(CooldownGetFreeRobot());
     }
 
@@ -178,7 +176,7 @@ public class Base : MonoBehaviour
         {
             robot.WentToFlag(flagPosition);
             _robotStorage.TryRemoveRobotFromList(robot);
-            Debug.Log("robot has been send to flag");
+            StartCoroutine(CooldownResourceTask());
         }
     }
 }

@@ -2,19 +2,21 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BaseBuilder))]
+[RequireComponent(typeof(Mover))]
 public class Robot : MonoBehaviour
 {
     [SerializeField] private Rope _rope;
-    [SerializeField] private Mover _mover;
 
+    private Mover _mover;
     private Resource _targetResource;
-    private Transform _endPosition;
     private BaseBuilder _builder;
+    private Transform _endPosition;
 
     public event Action<Robot, Resource> ResourceDelivered;
 
     private void Awake()
     {
+        _mover = GetComponent<Mover>();
         _builder = GetComponent<BaseBuilder>();
         _rope.gameObject.SetActive(false);
     }
@@ -29,8 +31,8 @@ public class Robot : MonoBehaviour
         Debug.Log("Going to flag!");
         _endPosition = flagPosition;
 
-        _mover.TargetAchieved += OnFlagAchieved;
         _mover.StartMoveToTarget(flagPosition);
+        _mover.TargetAchieved += OnFlagAchieved;
     }
 
     public void SetResource(Resource resource)
