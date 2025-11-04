@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ClickDetector : MonoBehaviour
 {
@@ -24,14 +25,16 @@ public class ClickDetector : MonoBehaviour
         _input.Player.LeftClick.performed -= OnClick;
     }
 
-    private void OnClick(UnityEngine.InputSystem.InputAction.CallbackContext context)
+    private void OnClick(InputAction.CallbackContext context)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             if (hit.collider.gameObject.TryGetComponent<Base>(out _))
+            {
                 BaseClicked?.Invoke();
+            }
         }
     }
 }

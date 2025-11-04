@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -11,9 +9,6 @@ public class ResourceStorage : MonoBehaviour
     [SerializeField] private int _maxCountPerRobot = 3;
     [SerializeField] private int _startCount = 0;
 
-    private int _currentResourceCount = 0;
-    private int _maxTotalResourceCount = 0;
-
     private List<ResourceParameters> _resources;
 
     private StoragePriority _priority;
@@ -21,8 +16,6 @@ public class ResourceStorage : MonoBehaviour
     public event Action<ResourceType, int> CountChanged;
     public event Action EnoughForRobot;
     public event Action EnoughForBase;
-
-    public bool IsFull => _currentResourceCount >= _maxTotalResourceCount;
 
     private void Awake()
     {
@@ -34,8 +27,6 @@ public class ResourceStorage : MonoBehaviour
             new ResourceParameters(ResourceType.Plastic,_startCount,_maxCountPerRobot),
             new ResourceParameters(ResourceType.Wires,_startCount,_maxCountPerRobot)
         };
-
-        _maxTotalResourceCount = _resources.Sum(resource => resource.MaxCount);
     }
 
     public void AddResource(Resource resourceToAdd)
@@ -48,9 +39,6 @@ public class ResourceStorage : MonoBehaviour
 
             tempParameter.CurrentCount++;
             tempParameter.ExpectedCount--;
-
-            _currentResourceCount++;
-
             _resources[index] = tempParameter;
 
             CountChanged?.Invoke(resourceToAdd.Type, _resources[index].CurrentCount);
@@ -121,6 +109,36 @@ public class ResourceStorage : MonoBehaviour
         }
     }
 
+    public bool IsFull()
+    {
+        return _resources.Sum(resource => resource.CurrentCount) >= _resources.Sum(resource => resource.MaxCount);
+    }
+
+    public void SpendResources()
+    {
+        int count = 0;
+
+        if (_priority == StoragePriority.Base)
+        {
+            count = _maxCountPerBase;
+            SwitchPriority(StoragePriority.Robot);
+        }
+        else
+        {
+            count = _maxCountPerRobot;
+        }
+
+        ResourceParameters tempParameters;
+
+        for (int i = 0; i < _resources.Count; i++)
+        {
+            tempParameters = _resources[i];
+            tempParameters.CurrentCount -= count;
+            _resources[i] = tempParameters;
+            CountChanged?.Invoke(_resources[i].Type, _resources[i].CurrentCount);
+        }
+    }
+
     private void CheckResources()
     {
         if (_priority == StoragePriority.Base && IsEnoughForNewBase())
@@ -129,7 +147,7 @@ public class ResourceStorage : MonoBehaviour
             return;
         }
 
-        if (IsEnoughForNewRobot())
+        if (_priority == StoragePriority.Robot && IsEnoughForNewRobot())
         {
             EnoughForRobot?.Invoke();
             return;
@@ -140,7 +158,7 @@ public class ResourceStorage : MonoBehaviour
     {
         ResourceParameters tempParameters;
 
-        for (int i = 0; i < _resources.Count - 1; i++)
+        for (int i = 0; i < _resources.Count; i++)
         {
             tempParameters = _resources[i];
             tempParameters.MaxCount = newLimit;
@@ -149,8 +167,8 @@ public class ResourceStorage : MonoBehaviour
     }
 
     private bool IsEnoughForNewRobot() =>
-    _resources.All(resource => resource.CurrentCount == resource.MaxCount);
+    _resources.All(resource => resource.CurrentCount >= resource.MaxCount);
 
-    public bool IsEnoughForNewBase() =>
- _resources.All(resource => resource.CurrentCount == resource.MaxCount);
+    private bool IsEnoughForNewBase() =>
+ _resources.All(resource => resource.CurrentCount >= resource.MaxCount);
 }

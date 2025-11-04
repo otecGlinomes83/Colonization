@@ -1,31 +1,58 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(ClickDetector))]
+[RequireComponent(typeof(FlagKeeper))]
+[RequireComponent(typeof(ResourceStorage))]
+[RequireComponent(typeof(RobotStorage))]
+
 public class Base : MonoBehaviour
 {
-    [SerializeField] private RobotStorage _robotStorage;
-    [SerializeField] private ResourceStorage _storage;
     [SerializeField] private ResourceDatabase _database;
-    [SerializeField] private ClickDetector _clickDetector;
-    [SerializeField] private FlagKeeper _flagKeeper;
-
     [SerializeField] private float _callRate;
 
     private Coroutine _resourceTaskCoroutine;
 
+    private ResourceStorage _storage;
+    private FlagKeeper _flagKeeper;
+    private ClickDetector _clickDetector;
+    private RobotStorage _robotStorage;
+
+    private MeshRenderer _meshRenderer;
+
+    private ColorChanger _colorChanger = new ColorChanger();
+
+    private void Awake()
+    {
+        _storage = GetComponent<ResourceStorage>();
+        _flagKeeper = GetComponent<FlagKeeper>();
+        _clickDetector = GetComponent<ClickDetector>();
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _robotStorage = GetComponent<RobotStorage>();
+
+        _colorChanger.SetDefaultColor(_meshRenderer.material.color);
+    }
+
     private void OnEnable()
     {
-        _clickDetector.BaseClicked += OnBaseClicked;
+        _clickDetector.BaseClicked += TryStartFlagPlacement;
+        _storage.EnoughForRobot += TryCreateNewRobot;
     }
 
     private void OnDisable()
     {
-        _clickDetector.BaseClicked -= OnBaseClicked;
+        _clickDetector.BaseClicked -= TryStartFlagPlacement;
     }
 
     private void Start()
     {
         _resourceTaskCoroutine = StartCoroutine(CooldownResourceTask());
+    }
+
+    public void Initialize(Robot initialRobot)
+    {
+        _robotStorage.AddRobotToList(initialRobot);
     }
 
     private IEnumerator CooldownResourceTask()
@@ -37,14 +64,17 @@ public class Base : MonoBehaviour
             yield return cooldown;
 
             if (_robotStorage.TryGetFreeRobot(out Robot robot) == false)
+            {
                 continue;
+            }
 
-            if (_storage.IsFull || TryGetResource(out Resource resource) == false)
+            if (_storage.IsFull() || TryGetResource(out Resource resource) == false)
             {
                 ReturnRobotToStorage(robot);
                 continue;
             }
 
+            robot.Initialize(transform);
             robot.SetResource(resource);
             robot.ResourceDelivered += OnResourceDelivered;
         }
@@ -84,28 +114,45 @@ public class Base : MonoBehaviour
         _robotStorage.AddFreeRobot(robot);
     }
 
-    private void OnBaseClicked()
+    private void TryStartFlagPlacement()
     {
+        if (_robotStorage.IsAbleToCreateBase == false)
+            return;
+
+        _colorChanger.ChangeColor(_meshRenderer, Color.red);
+
         _flagKeeper.StartPlacement();
         _flagKeeper.Placed += OnFlagPlaced;
     }
 
     private void OnFlagPlaced()
     {
+        _colorChanger.TryChangeColorToDefault(_meshRenderer);
+
         _flagKeeper.Placed -= OnFlagPlaced;
         _storage.SwitchPriority(StoragePriority.Base);
-        _storage.EnoughForBase += OnEnoughForBase;
+        Debug.LogWarning("Base has new base as priority");
+        _storage.EnoughForBase += CreateBase;
     }
 
-    private void OnEnoughForBase()
+    private void CreateBase()
     {
-        _storage.EnoughForBase -= OnEnoughForBase;
+        Debug.LogWarning("Creating new Base");
 
+        _storage.EnoughForBase -= CreateBase;
         _storage.SwitchPriority(StoragePriority.Robot);
 
         StopCoroutine(_resourceTaskCoroutine);
-
         StartCoroutine(CooldownGetFreeRobot());
+    }
+
+    private void TryCreateNewRobot()
+    {
+        if (_robotStorage.IsAbleToCreateRobot)
+        {
+            _storage.SpendResources();
+            _robotStorage.CreateNewRobot(transform);
+        }
     }
 
     private IEnumerator CooldownGetFreeRobot()
@@ -118,10 +165,20 @@ public class Base : MonoBehaviour
 
         while (robot == null)
         {
+            Debug.Log("Trying get free robot");
             _robotStorage.TryGetFreeRobot(out robot);
         }
 
+        SendRobotToFlag(robot);
+    }
+
+    private void SendRobotToFlag(Robot robot)
+    {
         if (_flagKeeper.TryGetFlagPosition(out Transform flagPosition))
-            robot.WentToNewBase(flagPosition);
+        {
+            robot.WentToFlag(flagPosition);
+            _robotStorage.TryRemoveRobotFromList(robot);
+            Debug.Log("robot has been send to flag");
+        }
     }
 }

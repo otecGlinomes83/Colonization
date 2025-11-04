@@ -1,19 +1,21 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(BaseBuilder))]
 public class Robot : MonoBehaviour
 {
-    [SerializeField] private Transform _endPosition;
     [SerializeField] private Rope _rope;
     [SerializeField] private Mover _mover;
 
     private Resource _targetResource;
+    private Transform _endPosition;
+    private BaseBuilder _builder;
 
     public event Action<Robot, Resource> ResourceDelivered;
-    public event Action<Robot> FlagAchieved;
 
     private void Awake()
     {
+        _builder = GetComponent<BaseBuilder>();
         _rope.gameObject.SetActive(false);
     }
 
@@ -22,9 +24,13 @@ public class Robot : MonoBehaviour
         _endPosition = endPosition;
     }
 
-    public void WentToNewBase(Transform flagPosition)
+    public void WentToFlag(Transform flagPosition)
     {
+        Debug.Log("Going to flag!");
         _endPosition = flagPosition;
+
+        _mover.TargetAchieved += OnFlagAchieved;
+        _mover.StartMoveToTarget(flagPosition);
     }
 
     public void SetResource(Resource resource)
@@ -68,7 +74,8 @@ public class Robot : MonoBehaviour
 
     private void OnFlagAchieved()
     {
-        FlagAchieved?.Invoke(this);
+        Debug.Log("Creating base");
+        _builder.CreateNewBase(this);
     }
 
     private void ClearSubscribes()

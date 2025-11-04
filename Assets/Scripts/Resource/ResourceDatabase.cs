@@ -2,12 +2,18 @@
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(ResourceFinder))]
 public class ResourceDatabase : MonoBehaviour
 {
-    [SerializeField] private ResourceFinder _finder;
+     private ResourceFinder _finder;
 
     private List<Resource> _foundResources = new List<Resource>();
     private List<Resource> _reservedResources = new List<Resource>();
+
+    private void Awake()
+    {
+        _finder = GetComponent<ResourceFinder>();   
+    }
 
     public bool TryGetResourceByType(out Resource resource, ResourceType requiredType)
     {

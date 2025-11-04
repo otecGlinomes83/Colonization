@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(ClickDetector))]
 public class FlagKeeper : MonoBehaviour
@@ -9,32 +10,30 @@ public class FlagKeeper : MonoBehaviour
     [SerializeField] private Flag _flagPrefab;
     [SerializeField] private FlagBlueprint _flagBlueprintPrefab;
 
-    private Coroutine _moveCoroutine;
-
-    private PlayerInput _playerInput;
-
     private FlagBlueprint _blueprint;
     private Flag _flag;
 
+    private PlayerInput _playerInput;
+    private Coroutine _moveCoroutine;
+
     public event Action Placed;
+
+    private void Awake()
+    {
+        _playerInput = new PlayerInput();
+        _playerInput.Enable();
+    }
 
     public void StartPlacement()
     {
-        if (_blueprint == null)
-            _blueprint = Instantiate(_flagBlueprintPrefab);
-
-        _moveCoroutine = StartCoroutine(MoveFlag());
-
-        _playerInput = new PlayerInput();
-        _playerInput.Enable();
-        _playerInput.Player.LeftClick.performed += OnMouseClicked;
+        StartCoroutine(WaitBeforePlacement());
     }
 
     public bool TryGetFlagPosition(out Transform flagPosition)
     {
         flagPosition = null;
 
-        if(_flag==null)
+        if (_flag == null)
             return false;
 
         flagPosition = _flag.transform;
@@ -42,14 +41,32 @@ public class FlagKeeper : MonoBehaviour
         return true;
     }
 
-    private void OnMouseClicked(UnityEngine.InputSystem.InputAction.CallbackContext context)
+    private IEnumerator WaitBeforePlacement()
+    {
+        yield return new WaitForSecondsRealtime(0.25f);
+
+        if (_blueprint == null)
+            _blueprint = Instantiate(_flagBlueprintPrefab);
+
+        Debug.Log("Placement Started");
+
+        _playerInput.Enable();
+
+        _moveCoroutine = StartCoroutine(MoveFlag());
+
+        _playerInput.Player.LeftClick.performed += OnMouseClicked;
+    }
+
+    private void OnMouseClicked(InputAction.CallbackContext context)
     {
         _playerInput.Player.LeftClick.performed -= OnMouseClicked;
-        _playerInput.Disable();
 
         StopCoroutine(_moveCoroutine);
+        _playerInput.Disable();
 
-        _flag = Instantiate(_flagPrefab);
+        if (_flag == null)
+            _flag = Instantiate(_flagPrefab);
+
         _flag.transform.position = _blueprint.transform.position;
 
         Destroy(_blueprint.gameObject);
@@ -63,7 +80,7 @@ public class FlagKeeper : MonoBehaviour
 
         while (enabled)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (Physics.Raycast(ray, out RaycastHit hit))
                 if (hit.collider.gameObject.TryGetComponent<Floor>(out _))

@@ -2,17 +2,33 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(RobotBuilder))]
 public class RobotStorage : MonoBehaviour
 {
     [SerializeField] private List<Robot> _robots = new List<Robot>();
+    [SerializeField] private int _maxRobotCount = 3;
+
+    private RobotBuilder _builder;
 
     private List<Robot> _freeRobots = new List<Robot>();
 
-    public int FreeAmount => _freeRobots.Count;
+    private int _minRobotCountForBase = 1;
+
+    public bool IsAbleToCreateRobot => _robots.Count < _maxRobotCount;
+    public bool IsAbleToCreateBase => _robots.Count > _minRobotCountForBase;
 
     private void Awake()
     {
+        _builder = GetComponent<RobotBuilder>();
         _freeRobots = _robots.ToList();
+    }
+
+    public void CreateNewRobot(Transform endPosition)
+    {
+        if (_robots.Count >= _maxRobotCount)
+            return;
+
+        AddRobotToList(_builder.CreateRobot(endPosition));
     }
 
     public bool TryGetFreeRobot(out Robot robot)
@@ -33,5 +49,25 @@ public class RobotStorage : MonoBehaviour
     public void AddFreeRobot(Robot robot)
     {
         _freeRobots.Add(robot);
+    }
+
+    public void TryRemoveRobotFromList(Robot robot)
+    {
+        if (_robots.Contains(robot) == false)
+            return;
+
+        if (_freeRobots.Contains(robot))
+            _freeRobots.Remove(robot);
+
+        _robots.Remove(robot);
+    }
+
+    public void AddRobotToList(Robot robot)
+    {
+        if (_robots.Contains(robot))
+            return;
+
+        _robots.Add(robot);
+        AddFreeRobot(robot);
     }
 }
