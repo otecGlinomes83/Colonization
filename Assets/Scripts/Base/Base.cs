@@ -164,6 +164,7 @@ public class Base : MonoBehaviour
         while (robot == null)
         {
             Debug.Log("Trying get free robot");
+            yield return null;
             _robotStorage.TryGetFreeRobot(out robot);
         }
 
