@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,9 +10,9 @@ using UnityEngine;
 
 public class Base : MonoBehaviour
 {
-    [SerializeField] private ResourceDatabase _database;
     [SerializeField] private float _callRate;
 
+    private ResourceDatabase _database;
     private ResourceStorage _storage;
     private FlagKeeper _flagKeeper;
     private ClickDetector _clickDetector;
@@ -20,6 +21,10 @@ public class Base : MonoBehaviour
     private MeshRenderer _meshRenderer;
 
     private ColorChanger _colorChanger = new ColorChanger();
+
+    private bool _isFlagPlaced = false;
+
+    public event Action<Robot> SpawnAbled;
 
     private void Awake()
     {
@@ -48,9 +53,10 @@ public class Base : MonoBehaviour
         StartCoroutine(CooldownResourceTask());
     }
 
-    public void Initialize(Robot initialRobot)
+    public void Initialize(Robot initialRobot, ResourceDatabase database)
     {
         _robotStorage.AddRobotToList(initialRobot);
+        _database = database;
     }
 
     private IEnumerator CooldownResourceTask()
@@ -61,13 +67,17 @@ public class Base : MonoBehaviour
         {
             yield return cooldown;
 
+            Debug.Log($"{gameObject.name} tasking");
+
             if (_robotStorage.TryGetFreeRobot(out Robot robot) == false)
             {
+                Debug.LogError($"{gameObject.name} cant get free robot");               
                 continue;
             }
 
             if (_storage.IsFull() || TryGetResource(out Resource resource) == false)
             {
+                Debug.LogError($"{gameObject.name} storage is full");
                 ReturnRobotToStorage(robot);
                 continue;
             }
@@ -112,9 +122,9 @@ public class Base : MonoBehaviour
         _robotStorage.AddFreeRobot(robot);
     }
 
-    private void TryStartFlagPlacement()
+    private void TryStartFlagPlacement(Base detectedBase)
     {
-        if (_robotStorage.IsAbleToCreateBase == false)
+        if (_robotStorage.IsAbleToCreateBase == false && this == detectedBase)
             return;
 
         _colorChanger.ChangeColor(_meshRenderer, Color.red);
@@ -125,22 +135,20 @@ public class Base : MonoBehaviour
 
     private void OnFlagPlaced()
     {
-        _colorChanger.TryChangeColorToDefault(_meshRenderer);
+        if (_isFlagPlaced == false)
+            _storage.EnoughForBase += StartCreatingBase;
 
         _flagKeeper.Placed -= OnFlagPlaced;
+        _colorChanger.TryChangeColorToDefault(_meshRenderer);
         _storage.SwitchPriority(StoragePriority.Base);
-        Debug.LogWarning("Base has new base as priority");
-        _storage.EnoughForBase += CreateBase;
+        _isFlagPlaced = true;
     }
 
-    private void CreateBase()
+    private void StartCreatingBase()
     {
-        Debug.LogWarning("Creating new Base");
-
-        _storage.EnoughForBase -= CreateBase;
+        _storage.EnoughForBase -= StartCreatingBase;
         _storage.SwitchPriority(StoragePriority.Robot);
 
-        StopCoroutine(CooldownResourceTask());
         StartCoroutine(CooldownGetFreeRobot());
     }
 
@@ -159,16 +167,15 @@ public class Base : MonoBehaviour
 
         Robot robot = null;
 
-        yield return null;
-
         while (robot == null)
         {
-            Debug.Log("Trying get free robot");
             yield return null;
             _robotStorage.TryGetFreeRobot(out robot);
         }
 
         SendRobotToFlag(robot);
+
+        yield break;
     }
 
     private void SendRobotToFlag(Robot robot)
@@ -176,8 +183,17 @@ public class Base : MonoBehaviour
         if (_flagKeeper.TryGetFlagPosition(out Transform flagPosition))
         {
             robot.WentToFlag(flagPosition);
+            robot.FlagAchieved += OnRobotAchievedFlag;
             _robotStorage.TryRemoveRobotFromList(robot);
-            StartCoroutine(CooldownResourceTask());
         }
+    }
+
+    private void OnRobotAchievedFlag(Robot robot)
+    {
+        robot.FlagAchieved -= OnRobotAchievedFlag;
+        _flagKeeper.DestroyFlag();
+        _isFlagPlaced = false;
+
+        SpawnAbled?.Invoke(robot);
     }
 }

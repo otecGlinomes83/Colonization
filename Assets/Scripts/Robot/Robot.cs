@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(BaseBuilder))]
 [RequireComponent(typeof(Mover))]
 public class Robot : MonoBehaviour
 {
@@ -9,15 +8,14 @@ public class Robot : MonoBehaviour
 
     private Mover _mover;
     private Resource _targetResource;
-    private BaseBuilder _builder;
     private Transform _endPosition;
 
     public event Action<Robot, Resource> ResourceDelivered;
+    public event Action<Robot> FlagAchieved;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
-        _builder = GetComponent<BaseBuilder>();
         _rope.gameObject.SetActive(false);
     }
 
@@ -76,8 +74,7 @@ public class Robot : MonoBehaviour
 
     private void OnFlagAchieved()
     {
-        Debug.Log("Creating base");
-        _builder.CreateNewBase(this);
+        FlagAchieved?.Invoke(this);
     }
 
     private void ClearSubscribes()

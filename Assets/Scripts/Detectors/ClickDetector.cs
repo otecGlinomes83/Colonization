@@ -6,7 +6,7 @@ public class ClickDetector : MonoBehaviour
 {
     private PlayerInput _input;
 
-    public event Action BaseClicked;
+    public event Action<Base> BaseClicked;
 
     private void Awake()
     {
@@ -29,12 +29,12 @@ public class ClickDetector : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+
+        foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.gameObject.TryGetComponent<Base>(out _))
-            {
-                BaseClicked?.Invoke();
-            }
+            if (hit.collider.gameObject.TryGetComponent(out Base detectedBase))
+                BaseClicked?.Invoke(detectedBase);
         }
     }
 }

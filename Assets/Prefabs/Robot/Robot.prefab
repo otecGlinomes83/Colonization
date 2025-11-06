@@ -249,7 +249,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8702028409373002194}
   - component: {fileID: 4884764586987401512}
-  - component: {fileID: 354345944847953172}
   - component: {fileID: 8667052023921975348}
   - component: {fileID: 2059322554850253816}
   - component: {fileID: 151378952971028981}
@@ -301,19 +300,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &354345944847953172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865542698789380976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5379cd2109e10a74b8109ab1124434cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _basePrefab: {fileID: 8281166080892514759, guid: b21e167572318804486e2caa5133b56c, type: 3}
 --- !u!114 &8667052023921975348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a6cd8841eb63f459e8ffaea80f3340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 10
+  _moveSpeed: 40
   _threshold: 0.5
 --- !u!54 &151378952971028981
 Rigidbody:
@@ -381,14 +367,14 @@ SpringJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_Spring: 10
-  m_Damper: 0.2
-  m_MinDistance: 0
-  m_MaxDistance: 0
+  m_Spring: 10000
+  m_Damper: 100
+  m_MinDistance: 1
+  m_MaxDistance: 2
   m_Tolerance: 0.025
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
+  m_MassScale: 10
+  m_ConnectedMassScale: 10

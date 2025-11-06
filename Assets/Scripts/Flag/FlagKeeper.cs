@@ -29,6 +29,14 @@ public class FlagKeeper : MonoBehaviour
         StartCoroutine(WaitBeforePlacement());
     }
 
+    public void DestroyFlag()
+    {
+        if (_flag == null)
+            return;
+
+        Destroy(_flag.gameObject);
+    }
+
     public bool TryGetFlagPosition(out Transform flagPosition)
     {
         flagPosition = null;
@@ -47,8 +55,6 @@ public class FlagKeeper : MonoBehaviour
 
         if (_blueprint == null)
             _blueprint = Instantiate(_flagBlueprintPrefab);
-
-        Debug.Log("Placement Started");
 
         _playerInput.Enable();
 
