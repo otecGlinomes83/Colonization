@@ -325,7 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a6cd8841eb63f459e8ffaea80f3340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 40
+  _moveSpeed: 15
   _threshold: 0.5
 --- !u!54 &151378952971028981
 Rigidbody:
@@ -368,7 +368,7 @@ SpringJoint:
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_Spring: 10000
-  m_Damper: 100
+  m_Damper: 1000
   m_MinDistance: 1
   m_MaxDistance: 2
   m_Tolerance: 0.025

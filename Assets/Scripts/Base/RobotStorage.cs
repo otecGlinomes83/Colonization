@@ -14,9 +14,6 @@ public class RobotStorage : MonoBehaviour
 
     private int _minRobotCountForBase = 1;
 
-    public bool IsAbleToCreateRobot => _robots.Count < _maxRobotCount;
-    public bool IsAbleToCreateBase => _robots.Count > _minRobotCountForBase;
-
     private void Awake()
     {
         _builder = GetComponent<RobotBuilder>();
@@ -69,5 +66,18 @@ public class RobotStorage : MonoBehaviour
 
         _robots.Add(robot);
         AddFreeRobot(robot);
+    }
+
+    public bool IsAbleToCreateBase()
+    {
+        Debug.Log($"{_robots.Count} > {_minRobotCountForBase} - {_robots.Count > _minRobotCountForBase}");
+      return  _robots.Count > _minRobotCountForBase;
+    }
+
+    public bool IsAbleToCreateRobot()
+    {
+        Debug.Log($"{_robots.Count} < {_minRobotCountForBase} - {_robots.Count < _maxRobotCount}");
+
+        return _robots.Count < _maxRobotCount;
     }
 }

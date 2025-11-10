@@ -23,6 +23,7 @@ public class Base : MonoBehaviour
     private ColorChanger _colorChanger = new ColorChanger();
 
     private bool _isFlagPlaced = false;
+    private bool _isAbleToTask = true;
 
     public event Action<Robot> SpawnAbled;
 
@@ -46,6 +47,7 @@ public class Base : MonoBehaviour
     private void OnDisable()
     {
         _clickDetector.BaseClicked -= TryStartFlagPlacement;
+        _storage.EnoughForRobot -= TryCreateNewRobot;
     }
 
     private void Start()
@@ -67,17 +69,16 @@ public class Base : MonoBehaviour
         {
             yield return cooldown;
 
-            Debug.Log($"{gameObject.name} tasking");
+            if (_isAbleToTask == false)
+                continue;
 
             if (_robotStorage.TryGetFreeRobot(out Robot robot) == false)
             {
-                Debug.LogError($"{gameObject.name} cant get free robot");               
                 continue;
             }
 
             if (_storage.IsFull() || TryGetResource(out Resource resource) == false)
             {
-                Debug.LogError($"{gameObject.name} storage is full");
                 ReturnRobotToStorage(robot);
                 continue;
             }
@@ -124,8 +125,15 @@ public class Base : MonoBehaviour
 
     private void TryStartFlagPlacement(Base detectedBase)
     {
-        if (_robotStorage.IsAbleToCreateBase == false && this == detectedBase)
+        if (_robotStorage.IsAbleToCreateBase() == false)
+        {
             return;
+        }
+
+        if (this != detectedBase)
+        {
+            return;
+        }
 
         _colorChanger.ChangeColor(_meshRenderer, Color.red);
 
@@ -138,6 +146,11 @@ public class Base : MonoBehaviour
         if (_isFlagPlaced == false)
             _storage.EnoughForBase += StartCreatingBase;
 
+        if (_robotStorage.IsAbleToCreateBase()==false)
+        {
+
+        }
+
         _flagKeeper.Placed -= OnFlagPlaced;
         _colorChanger.TryChangeColorToDefault(_meshRenderer);
         _storage.SwitchPriority(StoragePriority.Base);
@@ -147,14 +160,13 @@ public class Base : MonoBehaviour
     private void StartCreatingBase()
     {
         _storage.EnoughForBase -= StartCreatingBase;
-        _storage.SwitchPriority(StoragePriority.Robot);
-
+        _isAbleToTask = false;
         StartCoroutine(CooldownGetFreeRobot());
     }
 
     private void TryCreateNewRobot()
     {
-        if (_robotStorage.IsAbleToCreateRobot)
+        if (_robotStorage.IsAbleToCreateRobot())
         {
             _storage.SpendResources();
             _robotStorage.CreateNewRobot(transform);
@@ -191,8 +203,14 @@ public class Base : MonoBehaviour
     private void OnRobotAchievedFlag(Robot robot)
     {
         robot.FlagAchieved -= OnRobotAchievedFlag;
+
         _flagKeeper.DestroyFlag();
+
+        _storage.SpendResources();
+        _storage.SwitchPriority(StoragePriority.Robot);
+
         _isFlagPlaced = false;
+        _isAbleToTask = true;
 
         SpawnAbled?.Invoke(robot);
     }

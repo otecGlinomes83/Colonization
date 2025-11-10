@@ -739,9 +739,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1a494f16751a9c4c9a78ea116158f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxCountPerBase: 5
-  _maxCountPerRobot: 3
-  _startCount: 2
+  _maxCountPerBase: 2
+  _maxCountPerRobot: 1
+  _startCount: 0
 --- !u!114 &8145238951013240918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -768,7 +768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _robots: []
-  _maxRobotCount: 3
+  _maxRobotCount: 2
 --- !u!114 &8281166080892514759
 MonoBehaviour:
   m_ObjectHideFlags: 0
