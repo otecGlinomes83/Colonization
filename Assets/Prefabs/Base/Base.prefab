@@ -599,11 +599,11 @@ GameObject:
   - component: {fileID: 5716636919397641156}
   - component: {fileID: 7811844108715404166}
   - component: {fileID: 1698997905081732842}
-  - component: {fileID: 7763552987822018853}
   - component: {fileID: 379034946091656410}
-  - component: {fileID: 8145238951013240918}
   - component: {fileID: 4382282814218103348}
   - component: {fileID: 8281166080892514759}
+  - component: {fileID: 1092375425373154002}
+  - component: {fileID: 8700971831239015121}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -713,20 +713,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9049e78cbc68d4046a5ba6084b826216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7763552987822018853
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7136579611376046622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 453b2ebc9c7a88f44a293fdf3d9bfa7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _flagPrefab: {fileID: 2389730394178838757, guid: 6a55ea2bb8049b542b290b734b2c56cd, type: 3}
-  _flagBlueprintPrefab: {fileID: 877296397430785199, guid: 2a9782eea76fd6e4f8c8721b8cd2c16a, type: 3}
 --- !u!114 &379034946091656410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,19 +728,6 @@ MonoBehaviour:
   _maxCountPerBase: 2
   _maxCountPerRobot: 1
   _startCount: 0
---- !u!114 &8145238951013240918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7136579611376046622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6515ffec4da8f0499b88ab6b1198530, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _robotPrefab: {fileID: 8667052023921975348, guid: e34415e2af3a40042bf58e53936e93da, type: 3}
 --- !u!114 &4382282814218103348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -782,6 +755,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _callRate: 1
+--- !u!114 &1092375425373154002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7136579611376046622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 735d9cb370dbe2d488a4c9ca8410397f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _robotPrefab: {fileID: 8667052023921975348, guid: e34415e2af3a40042bf58e53936e93da, type: 3}
+--- !u!114 &8700971831239015121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7136579611376046622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a96859174936f514ab581ed62a4cc2d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _flagPrefab: {fileID: 2389730394178838757, guid: 6a55ea2bb8049b542b290b734b2c56cd, type: 3}
+  _flagBlueprintPrefab: {fileID: 877296397430785199, guid: 2a9782eea76fd6e4f8c8721b8cd2c16a, type: 3}
 --- !u!1 &7672036938257125664
 GameObject:
   m_ObjectHideFlags: 0

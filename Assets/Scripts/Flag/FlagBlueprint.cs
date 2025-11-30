@@ -1,6 +1,3 @@
 using UnityEngine;
 
-public class FlagBlueprint : MonoBehaviour
-{
-
-}
+public class FlagBlueprint : MonoBehaviour{}

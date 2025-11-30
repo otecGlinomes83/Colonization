@@ -26,7 +26,6 @@ public class Robot : MonoBehaviour
 
     public void WentToFlag(Transform flagPosition)
     {
-        Debug.Log("Going to flag!");
         _endPosition = flagPosition;
 
         _mover.StartMoveToTarget(flagPosition);

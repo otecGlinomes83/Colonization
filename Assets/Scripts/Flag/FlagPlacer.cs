@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(ClickDetector))]
-public class FlagKeeper : MonoBehaviour
+public class FlagPlacer : MonoBehaviour
 {
     [SerializeField] private Flag _flagPrefab;
     [SerializeField] private FlagBlueprint _flagBlueprintPrefab;
@@ -15,6 +14,8 @@ public class FlagKeeper : MonoBehaviour
 
     private PlayerInput _playerInput;
     private Coroutine _moveCoroutine;
+
+    private float _delay = 0.25f;
 
     public event Action Placed;
 
@@ -26,7 +27,7 @@ public class FlagKeeper : MonoBehaviour
 
     public void StartPlacement()
     {
-        StartCoroutine(WaitBeforePlacement());
+        StartCoroutine(WaitForPlacementDelay());
     }
 
     public void DestroyFlag()
@@ -37,7 +38,7 @@ public class FlagKeeper : MonoBehaviour
         Destroy(_flag.gameObject);
     }
 
-    public bool TryGetFlagPosition(out Transform flagPosition)
+    public bool GetFlagPosition(out Transform flagPosition)
     {
         flagPosition = null;
 
@@ -49,9 +50,9 @@ public class FlagKeeper : MonoBehaviour
         return true;
     }
 
-    private IEnumerator WaitBeforePlacement()
+    private IEnumerator WaitForPlacementDelay()
     {
-        yield return new WaitForSecondsRealtime(0.25f);
+        yield return new WaitForSecondsRealtime(_delay);
 
         if (_blueprint == null)
             _blueprint = Instantiate(_flagBlueprintPrefab);
@@ -90,9 +91,7 @@ public class FlagKeeper : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit))
                 if (hit.collider.gameObject.TryGetComponent<Floor>(out _))
-                {
                     _blueprint.transform.position = hit.point;
-                }
 
             yield return null;
         }

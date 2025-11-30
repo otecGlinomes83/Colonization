@@ -10,10 +10,10 @@ public class ResourceFinder : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
 
-        if (_radius > 0f)
-        {
-            Gizmos.DrawWireSphere(transform.position, _radius);
-        }
+        if (_radius < 0f)
+            return;
+
+        Gizmos.DrawWireSphere(transform.position, _radius);
     }
 
     public bool TryFindResources(out List<Resource> resources)

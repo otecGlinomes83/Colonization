@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class RobotBuilder : MonoBehaviour
+public class RobotSpawner : MonoBehaviour
 {
     [SerializeField] private Robot _robotPrefab;
 

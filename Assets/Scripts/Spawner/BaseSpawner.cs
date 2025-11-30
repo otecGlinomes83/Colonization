@@ -30,19 +30,19 @@ public class BaseSpawner : MonoBehaviour
         TryAddBase(createdBase);
     }
 
-    private void TryAddBase(Base @base)
+    private void TryAddBase(Base baseToAdd)
     {
-        if (_createdBases.Contains(@base) == false)
+        if (_createdBases.Contains(baseToAdd) == false)
             return;
 
-        _createdBases.Add(@base);
+        _createdBases.Add(baseToAdd);
     }
 
     private void UnsubscribeAll()
     {
-        foreach (Base @base in _createdBases)
+        foreach (Base baseToUnsubscribe in _createdBases)
         {
-            @base.SpawnAbled -= CreateBase;
+            baseToUnsubscribe.SpawnAbled -= CreateBase;
         }
     }
 }

@@ -109,10 +109,8 @@ public class ResourceStorage : MonoBehaviour
         }
     }
 
-    public bool IsFull()
-    {
-        return _resources.Sum(resource => resource.CurrentCount) >= _resources.Sum(resource => resource.MaxCount);
-    }
+    public bool IsFull()=>
+        _resources.Sum(resource => resource.CurrentCount) >= _resources.Sum(resource => resource.MaxCount);
 
     public void SpendResources()
     {

@@ -35,10 +35,7 @@ public class ClickDetector : MonoBehaviour
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.gameObject.TryGetComponent(out Base detectedBase))
-            {
                 BaseClicked?.Invoke(detectedBase);
-                Debug.LogWarning($"{detectedBase.gameObject.name} clicked");
-            }
         }
     }
 }
