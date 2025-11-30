@@ -18,9 +18,9 @@ public class Base : MonoBehaviour
     private RobotStorage _robotStorage;
 
     private MeshRenderer _meshRenderer;
+    WaitForSecondsRealtime _cooldown;
 
     private ColorChanger _colorChanger = new ColorChanger();
-
     private bool _isFlagPlaced = false;
     private bool _isAbleToTask = true;
 
@@ -33,6 +33,8 @@ public class Base : MonoBehaviour
         _clickDetector = GetComponent<ClickDetector>();
         _meshRenderer = GetComponent<MeshRenderer>();
         _robotStorage = GetComponent<RobotStorage>();
+
+        _cooldown = new WaitForSecondsRealtime(_callRate);
 
         _colorChanger.SetDefaultColor(_meshRenderer.material.color);
     }
@@ -62,11 +64,9 @@ public class Base : MonoBehaviour
 
     private IEnumerator CooldownResourceTask()
     {
-        WaitForSecondsRealtime cooldown = new WaitForSecondsRealtime(_callRate);
-
         while (enabled)
         {
-            yield return cooldown;
+            yield return _cooldown;
 
             if (_isAbleToTask == false)
                 continue;
@@ -167,13 +167,11 @@ public class Base : MonoBehaviour
 
     private IEnumerator CooldownGetFreeRobot()
     {
-        WaitForSecondsRealtime cooldown = new WaitForSecondsRealtime(0.25f);
-
         Robot robot = null;
 
         while (robot == null)
         {
-            yield return null;
+            yield return _cooldown;
             _robotStorage.TryGetFreeRobot(out robot);
         }
 
