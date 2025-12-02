@@ -5,27 +5,21 @@ using UnityEngine;
 
 public class ResourceStorage : MonoBehaviour
 {
-    [SerializeField] private int _maxCountPerBase = 5;
-    [SerializeField] private int _maxCountPerRobot = 3;
     [SerializeField] private int _startCount = 0;
 
     private List<ResourceParameters> _resources;
 
-    private StoragePriority _priority;
-
     public event Action<ResourceType, int> CountChanged;
-    public event Action EnoughForRobot;
-    public event Action EnoughForBase;
+
+    public IReadOnlyList<ResourceParameters> Resources => _resources.AsReadOnly();
 
     private void Awake()
     {
-        _priority = StoragePriority.Robot;
-
         _resources = new List<ResourceParameters>
         {
-            new ResourceParameters(ResourceType.Metal,_startCount,_maxCountPerRobot),
-            new ResourceParameters(ResourceType.Plastic,_startCount,_maxCountPerRobot),
-            new ResourceParameters(ResourceType.Wires,_startCount,_maxCountPerRobot)
+            new ResourceParameters(ResourceType.Metal,_startCount),
+            new ResourceParameters(ResourceType.Plastic,_startCount),
+            new ResourceParameters(ResourceType.Wires,_startCount)
         };
     }
 
@@ -35,18 +29,17 @@ public class ResourceStorage : MonoBehaviour
 
         if (index >= 0)
         {
-            ResourceParameters tempParameter = _resources[index];
+            ResourceParameters parameter = _resources[index];
 
-            tempParameter.CurrentCount++;
-            tempParameter.ExpectedCount--;
-            _resources[index] = tempParameter;
+            parameter.IncreaseCount();
+            parameter.DecreaseExpectedCount();
+
+            _resources[index] = parameter;
 
             CountChanged?.Invoke(resourceToAdd.Type, _resources[index].CurrentCount);
         }
 
         resourceToAdd.Release();
-
-        CheckResources();
     }
 
     public bool TryCancelGettingResourceByType(ResourceType type)
@@ -55,10 +48,11 @@ public class ResourceStorage : MonoBehaviour
 
         if (index >= 0)
         {
-            ResourceParameters tempParameter = _resources[index];
-            tempParameter.ExpectedCount--;
+            ResourceParameters parameter = _resources[index];
 
-            _resources[index] = tempParameter;
+            parameter.DecreaseExpectedCount();
+
+            _resources[index] = parameter;
 
             return true;
         }
@@ -71,22 +65,21 @@ public class ResourceStorage : MonoBehaviour
         type = 0;
 
         List<ResourceParameters> neededResources = _resources
-            .Where(resource => resource.ExpectedCount + resource.CurrentCount < resource.MaxCount)
-            .OrderBy(resource => resource.ExpectedCount)
-            .ThenBy(resource => resource.CurrentCount)
+            .OrderBy(resource => resource.ExpectedCount + resource.CurrentCount)
             .ToList();
 
         if (neededResources.Count != 0)
         {
-            int targetIndex = _resources.FindIndex(resource => resource.Type == neededResources.First().Type);
+            int index = _resources.FindIndex(resource => resource.Type == neededResources.First().Type);
 
-            if (targetIndex >= 0)
+            if (index >= 0)
             {
-                ResourceParameters tempParameter = _resources[targetIndex];
-                tempParameter.ExpectedCount++;
-                _resources[targetIndex] = tempParameter;
+                ResourceParameters parameter = _resources[index];
 
-                type = _resources[targetIndex].Type;
+                parameter.IncreaseExpectedCount();
+                _resources[index] = parameter;
+
+                type = _resources[index].Type;
 
                 return true;
             }
@@ -95,78 +88,15 @@ public class ResourceStorage : MonoBehaviour
         return false;
     }
 
-    public void SwitchPriority(StoragePriority newPriority)
+    public void SpendResources(int count)
     {
-        _priority = newPriority;
-
-        if (_priority == StoragePriority.Base)
-        {
-            ChangeResourceLimits(_maxCountPerBase);
-        }
-        else
-        {
-            ChangeResourceLimits(_maxCountPerRobot);
-        }
-    }
-
-    public bool IsFull()=>
-        _resources.Sum(resource => resource.CurrentCount) >= _resources.Sum(resource => resource.MaxCount);
-
-    public void SpendResources()
-    {
-        int count = 0;
-
-        if (_priority == StoragePriority.Base)
-        {
-            count = _maxCountPerBase;
-            SwitchPriority(StoragePriority.Robot);
-        }
-        else
-        {
-            count = _maxCountPerRobot;
-        }
-
-        ResourceParameters tempParameters;
-
         for (int i = 0; i < _resources.Count; i++)
         {
-            tempParameters = _resources[i];
-            tempParameters.CurrentCount -= count;
-            _resources[i] = tempParameters;
-            CountChanged?.Invoke(_resources[i].Type, _resources[i].CurrentCount);
+            ResourceParameters parameter = _resources[i];
+
+            parameter.DecreaseCount(count);
+            _resources[i] = parameter;
+            CountChanged?.Invoke(parameter.Type, _resources[i].CurrentCount);
         }
     }
-
-    private void CheckResources()
-    {
-        if (_priority == StoragePriority.Base && IsEnoughForNewBase())
-        {
-            EnoughForBase?.Invoke();
-            return;
-        }
-
-        if (_priority == StoragePriority.Robot && IsEnoughForNewRobot())
-        {
-            EnoughForRobot?.Invoke();
-            return;
-        }
-    }
-
-    private void ChangeResourceLimits(int newLimit)
-    {
-        ResourceParameters tempParameters;
-
-        for (int i = 0; i < _resources.Count; i++)
-        {
-            tempParameters = _resources[i];
-            tempParameters.MaxCount = newLimit;
-            _resources[i] = tempParameters;
-        }
-    }
-
-    private bool IsEnoughForNewRobot() =>
-    _resources.All(resource => resource.CurrentCount >= resource.MaxCount);
-
-    private bool IsEnoughForNewBase() =>
- _resources.All(resource => resource.CurrentCount >= resource.MaxCount);
 }

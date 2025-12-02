@@ -1,13 +1,9 @@
-using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ClickDetector : MonoBehaviour
 {
     private PlayerInput _input;
-
-    public event Action<Base> BaseClicked;
 
     private void Awake()
     {
@@ -34,8 +30,8 @@ public class ClickDetector : MonoBehaviour
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.gameObject.TryGetComponent(out Base detectedBase))
-                BaseClicked?.Invoke(detectedBase);
+            if (hit.collider.gameObject.TryGetComponent(out FlagKeeper flagKeeper))
+                flagKeeper.TryStartPlacement();
         }
     }
 }

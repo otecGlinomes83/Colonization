@@ -27,7 +27,10 @@ public class FlagPlacer : MonoBehaviour
 
     public void StartPlacement()
     {
-        StartCoroutine(WaitForPlacementDelay());
+        if (_moveCoroutine != null)
+            return;
+
+        StartCoroutine(WaitBeforePlacement());
     }
 
     public void DestroyFlag()
@@ -35,10 +38,11 @@ public class FlagPlacer : MonoBehaviour
         if (_flag == null)
             return;
 
+        StopPlacement();
         Destroy(_flag.gameObject);
     }
 
-    public bool GetFlagPosition(out Transform flagPosition)
+    public bool TryGetFlagPosition(out Transform flagPosition)
     {
         flagPosition = null;
 
@@ -50,7 +54,16 @@ public class FlagPlacer : MonoBehaviour
         return true;
     }
 
-    private IEnumerator WaitForPlacementDelay()
+    private void StopPlacement()
+    {
+        if (_moveCoroutine == null)
+            return;
+
+        StopCoroutine(_moveCoroutine);
+        _moveCoroutine = null;
+    }
+
+    private IEnumerator WaitBeforePlacement()
     {
         yield return new WaitForSecondsRealtime(_delay);
 
@@ -62,13 +75,16 @@ public class FlagPlacer : MonoBehaviour
         _moveCoroutine = StartCoroutine(MoveFlag());
 
         _playerInput.Player.LeftClick.performed += OnMouseClicked;
+
+        yield break;
     }
 
     private void OnMouseClicked(InputAction.CallbackContext context)
     {
         _playerInput.Player.LeftClick.performed -= OnMouseClicked;
 
-        StopCoroutine(_moveCoroutine);
+        StopPlacement();
+
         _playerInput.Disable();
 
         if (_flag == null)
@@ -85,7 +101,7 @@ public class FlagPlacer : MonoBehaviour
     {
         yield return null;
 
-        while (enabled)
+        while (_blueprint != null)
         {
             Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 

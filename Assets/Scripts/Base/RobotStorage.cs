@@ -6,26 +6,22 @@ using UnityEngine;
 public class RobotStorage : MonoBehaviour
 {
     [SerializeField] private List<Robot> _robots = new List<Robot>();
-    [SerializeField] private int _maxRobotCount = 3;
 
-    private RobotSpawner _builder;
+    private RobotSpawner _robotSpawner;
 
     private List<Robot> _freeRobots = new List<Robot>();
 
-    private int _minRobotCountForBase = 1;
+    public int RobotsCount => _robots.Count;
 
     private void Awake()
     {
-        _builder = GetComponent<RobotSpawner>();
+        _robotSpawner = GetComponent<RobotSpawner>();
         _freeRobots = _robots.ToList();
     }
 
     public void CreateNewRobot(Transform endPosition)
     {
-        if (_robots.Count >= _maxRobotCount)
-            return;
-
-        AddRobotToList(_builder.CreateRobot(endPosition));
+        AddRobotToList(_robotSpawner.CreateRobot(endPosition));
     }
 
     public bool TryGetFreeRobot(out Robot robot)
@@ -67,10 +63,4 @@ public class RobotStorage : MonoBehaviour
         _robots.Add(robot);
         AddFreeRobot(robot);
     }
-
-    public bool IsAbleToCreateBase() =>
-        _robots.Count > _minRobotCountForBase;
-
-    public bool IsAbleToCreateRobot() =>
-        _robots.Count < _maxRobotCount;
 }

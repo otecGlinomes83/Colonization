@@ -604,6 +604,8 @@ GameObject:
   - component: {fileID: 8281166080892514759}
   - component: {fileID: 1092375425373154002}
   - component: {fileID: 8700971831239015121}
+  - component: {fileID: 8012768479871879422}
+  - component: {fileID: 957965160804903095}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -725,8 +727,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1a494f16751a9c4c9a78ea116158f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxCountPerBase: 2
-  _maxCountPerRobot: 1
   _startCount: 0
 --- !u!114 &4382282814218103348
 MonoBehaviour:
@@ -741,7 +741,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _robots: []
-  _maxRobotCount: 2
 --- !u!114 &8281166080892514759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -754,7 +753,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb3773ca378c0a4caf04fa18e0f98c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _callRate: 1
+  _taskRate: 0.5
+  _waitTime: 1
 --- !u!114 &1092375425373154002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -782,6 +782,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _flagPrefab: {fileID: 2389730394178838757, guid: 6a55ea2bb8049b542b290b734b2c56cd, type: 3}
   _flagBlueprintPrefab: {fileID: 877296397430785199, guid: 2a9782eea76fd6e4f8c8721b8cd2c16a, type: 3}
+--- !u!114 &8012768479871879422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7136579611376046622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b1622e9c973f146837cad443421c95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &957965160804903095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7136579611376046622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ef82a9c43219542a209ec9ff5c9f0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _resourcesForRobot: 1
+  _resourcesForBase: 2
+  _maxRobotCount: 2
 --- !u!1 &7672036938257125664
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,16 +2,37 @@ public struct ResourceParameters
 {
     public ResourceType Type;
 
-    public int MaxCount;
-    public int CurrentCount;
-    public int ExpectedCount;
+    private int _currentCount;
+    private int _expectedCount;
 
-    public ResourceParameters(ResourceType type, int currentCount, int maxCount, int expectedCount = 0)
+    public int CurrentCount => _currentCount;
+    public int ExpectedCount => _expectedCount;
+
+    public ResourceParameters(ResourceType type, int currentCount, int expectedCount = 0)
     {
         Type = type;
 
-        MaxCount = maxCount;
-        CurrentCount = currentCount;
-        ExpectedCount = expectedCount;
+        _currentCount = currentCount;
+        _expectedCount = expectedCount;
+    }
+
+    public void IncreaseExpectedCount()
+    {
+        _expectedCount++;
+    }
+
+    public void IncreaseCount()
+    {
+        _currentCount++;
+    }
+
+    public void DecreaseCount(int count)
+    {
+        _currentCount -= count;
+    }
+
+    public void DecreaseExpectedCount()
+    {
+        _expectedCount--;
     }
 }

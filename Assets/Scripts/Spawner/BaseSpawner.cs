@@ -23,8 +23,8 @@ public class BaseSpawner : MonoBehaviour
     {
         Base createdBase = Instantiate(_basePrefab);
 
-        createdBase.Initialize(initialRobot, _resourceDatabase);
         createdBase.transform.position = initialRobot.transform.position;
+        createdBase.Initialize(initialRobot, _resourceDatabase);
         createdBase.SpawnAbled += CreateBase;
 
         TryAddBase(createdBase);

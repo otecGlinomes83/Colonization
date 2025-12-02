@@ -604,8 +604,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _resourcePrefab: {fileID: 2626985980691355567, guid: 5b17258c63820354884fe9173e9513ae, type: 3}
-  _spawnRate: 1
-  _maxSpawns: 3
+  _spawnRate: 0.75
+  _maxSpawns: 5
 --- !u!65 &631397563
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -928,8 +928,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _resourcePrefab: {fileID: 5682736261729958305, guid: c4014259ef47a024298147333f1e2bae, type: 3}
-  _spawnRate: 1
-  _maxSpawns: 3
+  _spawnRate: 0.75
+  _maxSpawns: 5
 --- !u!65 &987145260
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1318,6 +1318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 75
+  _maxFoundResources: 25
 --- !u!4 &1638033095
 Transform:
   m_ObjectHideFlags: 0
@@ -1550,8 +1551,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _resourcePrefab: {fileID: 3359560223283805053, guid: e02b8baa2dc9ef44f88f2750612bf144, type: 3}
-  _spawnRate: 1
-  _maxSpawns: 3
+  _spawnRate: 0.75
+  _maxSpawns: 5
 --- !u!65 &2073032562
 BoxCollider:
   m_ObjectHideFlags: 0

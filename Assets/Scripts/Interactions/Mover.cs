@@ -10,14 +10,12 @@ public class Mover : MonoBehaviour
 
     private Coroutine _moveToCoroutine;
 
-    public event Action TargetAchieved;
-
-    public void StartMoveToTarget(Transform target)
+    public void StartMoveToTarget(Transform target, Action onComplete = null)
     {
         if (_moveToCoroutine != null)
             StopMoveTo();
 
-        _moveToCoroutine = StartCoroutine(MoveTo(target));
+        _moveToCoroutine = StartCoroutine(MoveTo(target, onComplete));
     }
 
     public void StopMoveTo()
@@ -29,7 +27,7 @@ public class Mover : MonoBehaviour
         _moveToCoroutine = null;
     }
 
-    private IEnumerator MoveTo(Transform target)
+    private IEnumerator MoveTo(Transform target, Action onComplete)
     {
         Vector3 targetPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
 
@@ -45,7 +43,7 @@ public class Mover : MonoBehaviour
 
             if (sqrDistance <= sqrThreshold)
             {
-                TargetAchieved?.Invoke();
+                onComplete?.Invoke();
                 _moveToCoroutine = null;
 
                 yield break;

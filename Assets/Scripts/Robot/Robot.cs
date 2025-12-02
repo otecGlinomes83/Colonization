@@ -7,11 +7,7 @@ public class Robot : MonoBehaviour
     [SerializeField] private Rope _rope;
 
     private Mover _mover;
-    private Resource _targetResource;
     private Transform _endPosition;
-
-    public event Action<Robot, Resource> ResourceDelivered;
-    public event Action<Robot> FlagAchieved;
 
     private void Awake()
     {
@@ -24,61 +20,23 @@ public class Robot : MonoBehaviour
         _endPosition = endPosition;
     }
 
-    public void WentToFlag(Transform flagPosition)
+    public void MoveTo(Transform target, Action<Robot> onComplete) =>
+        _mover.StartMoveToTarget(target, () => onComplete?.Invoke(this));
+
+    public void CollectResource(Resource resource, Action<Robot, Resource> onDelivered)
     {
-        _endPosition = flagPosition;
+        MoveTo(resource.transform, robot =>
+        {
+            _rope.gameObject.SetActive(true);
+            _rope.SetConnectedBody(resource.Rigidbody);
 
-        _mover.StartMoveToTarget(flagPosition);
-        _mover.TargetAchieved += OnFlagAchieved;
-    }
+            MoveTo(_endPosition, robot =>
+            {
+                _rope.SetConnectedBody(null);
+                _rope.gameObject.SetActive(false);
 
-    public void SetResource(Resource resource)
-    {
-        _targetResource = resource;
-
-        _mover.StartMoveToTarget(_targetResource.transform);
-        _mover.TargetAchieved += OnResourceAchieved;
-    }
-
-    private void ConnectResource()
-    {
-        _mover.StopMoveTo();
-
-        _rope.gameObject.SetActive(true);
-        _rope.SetConnectedBody(_targetResource.Rigidbody);
-
-        _mover.StartMoveToTarget(_endPosition.transform);
-
-        _mover.TargetAchieved += OnEndPositionAchieved;
-    }
-
-    private void OnResourceAchieved()
-    {
-        _mover.TargetAchieved -= OnResourceAchieved;
-        ConnectResource();
-    }
-
-    private void OnEndPositionAchieved()
-    {
-        ClearSubscribes();
-
-        Resource DeliveredResource = _targetResource;
-        _targetResource = null;
-
-        ResourceDelivered?.Invoke(this, DeliveredResource);
-
-        _rope.SetConnectedBody(null);
-        _rope.gameObject.SetActive(false);
-    }
-
-    private void OnFlagAchieved()
-    {
-        FlagAchieved?.Invoke(this);
-    }
-
-    private void ClearSubscribes()
-    {
-        _mover.TargetAchieved -= OnResourceAchieved;
-        _mover.TargetAchieved -= OnEndPositionAchieved;
+                onDelivered?.Invoke(this, resource);
+            });
+        });
     }
 }
