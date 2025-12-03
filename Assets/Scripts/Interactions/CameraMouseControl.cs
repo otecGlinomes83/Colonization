@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CameraMouseControl : MonoBehaviour
 {
@@ -9,8 +8,6 @@ public class CameraMouseControl : MonoBehaviour
 
     [SerializeField] private float _dragSpeed = 0.01f;
 
-    private PlayerInput _playerInput;
-
     private bool _isDragging = false;
 
     private void OnValidate()
@@ -18,25 +15,16 @@ public class CameraMouseControl : MonoBehaviour
         transform.position = _startPosition;
     }
 
-    private void Awake()
-    {
-        _playerInput = new PlayerInput();
-    }
-
     private void OnEnable()
     {
-        _playerInput.Enable();
-
-        _playerInput.Player.MoveButton.performed += OnDragPerformed;
-        _playerInput.Player.MoveButton.canceled += OnDragCanceled;
+        InputHandler.Instance.MoveButtonPressed += OnDragPerformed;
+        InputHandler.Instance.MoveButtonReleased += OnDragCanceled;
     }
 
     private void OnDisable()
     {
-        _playerInput.Disable();
-
-        _playerInput.Player.MoveButton.performed -= OnDragPerformed;
-        _playerInput.Player.MoveButton.canceled -= OnDragCanceled;
+        InputHandler.Instance.MoveButtonPressed -= OnDragPerformed;
+        InputHandler.Instance.MoveButtonReleased -= OnDragCanceled;
     }
 
     private void Update()
@@ -46,7 +34,7 @@ public class CameraMouseControl : MonoBehaviour
             if (Cursor.lockState != CursorLockMode.Confined)
                 Cursor.lockState = CursorLockMode.Confined;
 
-            Vector2 mouseDelta = _playerInput.Player.MouseDelta.ReadValue<Vector2>();
+            Vector2 mouseDelta = InputHandler.Instance.MouseDelta;
 
             Vector3 newPosition = transform.position + new Vector3(-mouseDelta.x, 0f, -mouseDelta.y) * _dragSpeed;
 
@@ -60,9 +48,9 @@ public class CameraMouseControl : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
     }
 
-    private void OnDragPerformed(InputAction.CallbackContext ctx) =>
+    private void OnDragPerformed() =>
          _isDragging = true;
 
-    private void OnDragCanceled(InputAction.CallbackContext ctx) =>
+    private void OnDragCanceled() =>
         _isDragging = false;
 }

@@ -3,26 +3,17 @@ using UnityEngine.InputSystem;
 
 public class ClickDetector : MonoBehaviour
 {
-    private PlayerInput _input;
-
-    private void Awake()
-    {
-        _input = new PlayerInput();
-    }
-
     private void OnEnable()
     {
-        _input.Enable();
-        _input.Player.LeftClick.performed += OnClick;
+        InputHandler.Instance.LeftButtonClicked += OnClick;
     }
 
     private void OnDisable()
     {
-        _input.Disable();
-        _input.Player.LeftClick.performed -= OnClick;
+        InputHandler.Instance.LeftButtonClicked -= OnClick;
     }
 
-    private void OnClick(InputAction.CallbackContext context)
+    private void OnClick()
     {
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
