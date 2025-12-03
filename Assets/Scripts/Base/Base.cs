@@ -77,7 +77,6 @@ public class Base : MonoBehaviour
             if (TryGetResource(out Resource resource) == false)
             {
                 _robotStorage.AddFreeRobot(robot);
-                Debug.LogError("Cant get any Resource");
                 continue;
             }
 
