@@ -119,6 +119,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &174145842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 174145844}
+  - component: {fileID: 174145843}
+  m_Layer: 0
+  m_Name: ClickDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &174145843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174145842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9049e78cbc68d4046a5ba6084b826216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputHandler: {fileID: 2147261904}
+--- !u!4 &174145844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174145842}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &272970630
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,6 +496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startPosition: {x: 0, y: 30, z: 0}
   _cameraBounds: {fileID: 313897600}
+  _inputHandler: {fileID: 2147261904}
   _dragSpeed: 0.05
 --- !u!1 &410087039
 GameObject:
@@ -606,6 +652,7 @@ MonoBehaviour:
   _resourcePrefab: {fileID: 2626985980691355567, guid: 5b17258c63820354884fe9173e9513ae, type: 3}
   _spawnRate: 1
   _maxSpawns: 25
+  _baseDetectingArea: 5
 --- !u!65 &631397563
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -930,6 +977,7 @@ MonoBehaviour:
   _resourcePrefab: {fileID: 5682736261729958305, guid: c4014259ef47a024298147333f1e2bae, type: 3}
   _spawnRate: 1
   _maxSpawns: 25
+  _baseDetectingArea: 5
 --- !u!65 &987145260
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1553,6 +1601,7 @@ MonoBehaviour:
   _resourcePrefab: {fileID: 3359560223283805053, guid: e02b8baa2dc9ef44f88f2750612bf144, type: 3}
   _spawnRate: 1
   _maxSpawns: 25
+  _baseDetectingArea: 5
 --- !u!65 &2073032562
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1714,3 +1763,4 @@ SceneRoots:
   - {fileID: 1782649180}
   - {fileID: 1308306717}
   - {fileID: 2147261905}
+  - {fileID: 174145844}
