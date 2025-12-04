@@ -598,7 +598,6 @@ GameObject:
   - component: {fileID: 1360247015398763668}
   - component: {fileID: 5716636919397641156}
   - component: {fileID: 7811844108715404166}
-  - component: {fileID: 1698997905081732842}
   - component: {fileID: 379034946091656410}
   - component: {fileID: 4382282814218103348}
   - component: {fileID: 8281166080892514759}
@@ -703,18 +702,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1698997905081732842
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7136579611376046622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9049e78cbc68d4046a5ba6084b826216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &379034946091656410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -781,7 +768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _flagPrefab: {fileID: 2389730394178838757, guid: 6a55ea2bb8049b542b290b734b2c56cd, type: 3}
-  _flagBlueprintPrefab: {fileID: 877296397430785199, guid: 2a9782eea76fd6e4f8c8721b8cd2c16a, type: 3}
+  _blueprintPrefab: {fileID: 877296397430785199, guid: 2a9782eea76fd6e4f8c8721b8cd2c16a, type: 3}
 --- !u!114 &8012768479871879422
 MonoBehaviour:
   m_ObjectHideFlags: 0

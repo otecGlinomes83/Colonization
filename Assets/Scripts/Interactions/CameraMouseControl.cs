@@ -5,6 +5,7 @@ public class CameraMouseControl : MonoBehaviour
     [SerializeField] private Vector3 _startPosition = new Vector3(0, 30f, 0);
 
     [SerializeField] private BoxCollider _cameraBounds;
+    [SerializeField] private InputHandler _inputHandler;
 
     [SerializeField] private float _dragSpeed = 0.01f;
 
@@ -17,14 +18,14 @@ public class CameraMouseControl : MonoBehaviour
 
     private void OnEnable()
     {
-        InputHandler.Instance.MoveButtonPressed += OnDragPerformed;
-        InputHandler.Instance.MoveButtonReleased += OnDragCanceled;
+        _inputHandler.MoveButtonPressed += OnDragPerformed;
+        _inputHandler.MoveButtonReleased += OnDragCanceled;
     }
 
     private void OnDisable()
     {
-        InputHandler.Instance.MoveButtonPressed -= OnDragPerformed;
-        InputHandler.Instance.MoveButtonReleased -= OnDragCanceled;
+        _inputHandler.MoveButtonPressed -= OnDragPerformed;
+        _inputHandler.MoveButtonReleased -= OnDragCanceled;
     }
 
     private void Update()
@@ -34,7 +35,7 @@ public class CameraMouseControl : MonoBehaviour
             if (Cursor.lockState != CursorLockMode.Confined)
                 Cursor.lockState = CursorLockMode.Confined;
 
-            Vector2 mouseDelta = InputHandler.Instance.MouseDelta;
+            Vector2 mouseDelta = _inputHandler.MouseDelta;
 
             Vector3 newPosition = transform.position + new Vector3(-mouseDelta.x, 0f, -mouseDelta.y) * _dragSpeed;
 

@@ -4,8 +4,6 @@ using UnityEngine.InputSystem;
 
 public class InputHandler : MonoBehaviour
 {
-    public static InputHandler Instance { get; private set; }
-
     private PlayerInput _playerInput;
 
     public event Action LeftButtonClicked;
@@ -13,12 +11,9 @@ public class InputHandler : MonoBehaviour
     public event Action MoveButtonReleased;
 
     public Vector2 MouseDelta { get; private set; }
-    public Vector2 MousePosition { get; private set; }
 
     private void Awake()
     {
-        Instance = this;
-
         _playerInput = new PlayerInput();
 
         _playerInput.Player.LeftClick.performed += ctx => LeftButtonClicked?.Invoke();
@@ -44,6 +39,5 @@ public class InputHandler : MonoBehaviour
     private void Update()
     {
         MouseDelta = _playerInput.Player.MouseDelta.ReadValue<Vector2>();
-        MousePosition = Mouse.current.position.ReadValue();
     }
 }

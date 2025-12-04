@@ -9,6 +9,7 @@ public class ResourceSpawner : MonoBehaviour
     [SerializeField] private Resource _resourcePrefab;
     [SerializeField] private float _spawnRate;
     [SerializeField] private int _maxSpawns;
+    [SerializeField] private int _baseDetectingArea = 5;
 
     private BoxCollider _spawnZone;
 
@@ -76,7 +77,7 @@ public class ResourceSpawner : MonoBehaviour
 
     private bool IsBaseHere(Vector3 spawnPosition)
     {
-        Collider[] hits = Physics.OverlapSphere(spawnPosition, 5f);
+        Collider[] hits = Physics.OverlapSphere(spawnPosition, _baseDetectingArea);
 
         return hits.Any(hit => hit.gameObject.GetComponent<Base>() != null);
     }

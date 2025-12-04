@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(FlagPlacer))]
-[RequireComponent(typeof(ClickDetector))]
 public class FlagKeeper : MonoBehaviour
 {
     private FlagPlacer _flagPlacer;
@@ -35,6 +34,9 @@ public class FlagKeeper : MonoBehaviour
         _flagPlacer.StartPlacement();
         _flagPlacer.Placed += OnFlagPlaced;
     }
+
+    public void StopPlacement() =>
+        _flagPlacer.TryStopPlacement();
 
     public void DestroyFlag()
     {
